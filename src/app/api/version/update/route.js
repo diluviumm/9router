@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { killAppProcesses, spawnUpdaterAndExit } from "@/lib/appUpdater";
 
 export async function POST() {
+  return Response.json({ ok: false, disabled: "self-updater dimatikan di fork mael (update via git fork flow)" }, { status: 501 });
   if (process.env.NODE_ENV !== "production") {
     return NextResponse.json(
       { success: false, message: "Update is only available in production build (9router CLI)" },

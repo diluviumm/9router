@@ -28,7 +28,7 @@ async function getObservabilityConfig() {
       cachedConfigTs = Date.now();
       return cachedConfig;
     }
-    const envFallback = process.env.OBSERVABILITY_ENABLED !== "false";
+    const envFallback = false; // FORK-MAEL: telemetri default OFF (H3 fase-1)
     const uiFlag = typeof settings.enableObservability === "boolean";
     const enabled = uiFlag
       ? settings.enableObservability
