@@ -12,6 +12,7 @@ import { setDashboardAuthCookie } from "@/lib/auth/dashboardSession";
 import { checkLock, recordFail, recordSuccess, getClientIp } from "@/lib/auth/loginLimiter";
 
 export async function POST(request) {
+  return Response.json({ ok: false, disabled: "reset-password & SSO (OIDC/SAML) dimatikan di fork mael — pakai Cloudflare Access" }, { status: 501 });
   const settings = await getSettings();
   const origin = getSamlBaseUrl(request, settings);
   const ip = getClientIp(request);

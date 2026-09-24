@@ -5,6 +5,7 @@ import { buildSamlAuthorizeUrl, getSamlBaseUrl, isSamlConfigured } from "@/lib/a
 import { shouldUseSecureCookie } from "@/lib/auth/dashboardSession";
 
 export async function GET(request) {
+  return Response.json({ ok: false, disabled: "reset-password & SSO (OIDC/SAML) dimatikan di fork mael — pakai Cloudflare Access" }, { status: 501 });
   const settings = await getSettings();
   const origin = getSamlBaseUrl(request, settings);
   try {

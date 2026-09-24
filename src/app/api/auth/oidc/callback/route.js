@@ -18,6 +18,7 @@ function clearOidcCookies(cookieStore) {
 }
 
 export async function GET(request) {
+  return Response.json({ ok: false, disabled: "reset-password & SSO (OIDC/SAML) dimatikan di fork mael — pakai Cloudflare Access" }, { status: 501 });
   const url = new URL(request.url);
   const error = url.searchParams.get("error");
   if (error) {

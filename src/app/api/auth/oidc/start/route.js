@@ -12,6 +12,7 @@ import {
 import { shouldUseSecureCookie } from "@/lib/auth/dashboardSession";
 
 export async function GET(request) {
+  return Response.json({ ok: false, disabled: "reset-password & SSO (OIDC/SAML) dimatikan di fork mael — pakai Cloudflare Access" }, { status: 501 });
   try {
     const config = await getOidcRuntimeConfig();
     if (!config) {

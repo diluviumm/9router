@@ -14,6 +14,7 @@ async function canAccessTestRoute() {
 }
 
 export async function POST(request) {
+  return Response.json({ ok: false, disabled: "reset-password & SSO (OIDC/SAML) dimatikan di fork mael — pakai Cloudflare Access" }, { status: 501 });
   try {
     if (!(await canAccessTestRoute())) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

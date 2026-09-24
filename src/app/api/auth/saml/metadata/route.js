@@ -2,6 +2,7 @@ import { getSettings } from "@/lib/localDb";
 import { generateSamlMetadata } from "@/lib/auth/saml";
 
 export async function GET(request) {
+  return Response.json({ ok: false, disabled: "reset-password & SSO (OIDC/SAML) dimatikan di fork mael — pakai Cloudflare Access" }, { status: 501 });
   try {
     const settings = await getSettings();
     const origin = new URL(request.url).origin;
