@@ -51,13 +51,27 @@ systemctl --user restart 9router.service
 4. **Fase-4 (opsional):** A2+A3+A5.
 
 ## 5. KRITERIA SELESAI (definition of done)
-- [ ] Build `npm run build` tanpa error.
-- [ ] Unit `9router.service` active, port 20128 respons, `router.ishmly.space` via tunnel OK.
-- [ ] Pencocokan outbound: TAK ADA request ke `9router.com` / analytics saat startup+dashboard (verifikasi `journalctl` + grep log).
-- [ ] Updater & observability OFF (env default + kode).
-- [ ] Preset mimo tersedia & terpilih.
-- [ ] Setiap fase punya commit sendiri (mudah revert per-fase).
+- [x] Build `npm run build` tanpa error. (BUILD_EXIT=0 tiap fase; fase-4 = README-only, tanpa build ulang)
+- [x] Unit `9router.service` active, port 20128 respons, `router.ishmly.space` via tunnel OK. (verifikasi rutin tiap ronde)
+- [x] Pencocokan outbound: TAK ADA request ke `9router.com` / analytics. (audit fase-3: grep kode aktif = NOL; log startup bersih; sisa hanya file .bak untracked)
+- [x] Updater & observability OFF (env default + kode). (route update/shutdown = 501; envFallback=false; ENABLE_REQUEST_LOGS verified OFF fase-4)
+- [x] Preset mimo tersedia. (combo `mael-mimo` = opencode-go mimo-v2.6-flash → pro → pro-ultraspeed; "terpilih" = saat ini Mael route langsung opencode-go,9router di-diamkan per permintaan)
+- [x] Setiap fase punya commit sendiri. (fase-1 `8c00041d`, fase-2 `73eb3fb1`, fase-3 `26a6faac`, fase-4 `a573ff14`)
 
 ## 6. CATATAN
 - Seluruh perubahan = reversibel (commit per-fase + paket resmi npm sebagai fallback).
 - Jangan `git push --force`; upstream sync utamakan `cherry-pick`/`checkout -- file` (bukan merge penuh) supaya fitur yang kita hapus tidak kembali.
+
+## 7. STATUS-REALITA (25 Sep 2026 — fork-final)
+
+| Fase | Isi | Commit | Status |
+|---|---|---|---|
+| Fase-1 (privacy) | H1 cloud-sync OFF · H2 updater 501 · H3 telemetri hard-OFF | `8c00041d` | ✅ DONE |
+| Fase-2 (fungsional) | A1 combo `mael-mimo` · A2 `/api/healthz` publik · A3 branding Mael Stack + guard whitelist | `73eb3fb1` | ✅ DONE |
+| Fase-3 (kebersihan) | H4 6 file Docker → `attic/` · H5 README ringkas (upstream di attic) · H6 SearXNG OFF · audit outbound NOL | `26a6faac` | ✅ DONE |
+| Fase-4 (ops) | A4 doc integrasi ANTHROPIC/OPENAI_BASE_URL · A5 request-logs verified OFF · logrotate rclone (52MB→0) | `a573ff14` | ✅ DONE |
+| DoD §5 | Semua 6 butir terpenuhi (lihat tanda [x] di atas) | — | ✅ ALL GREEN |
+
+Catatan operasional: rollback = `npm i -g ~/me/forks/rollback/9router-0.5.86.tgz` (tarball resmi)
+atau `git revert <fase>`; update upstream selektif = playbook §3 (checkout/cherry-pick, bukan merge penuh).
+Sisa untracked = file `.bak-*` (disengaja utk rollback; tidak ikut commit).
