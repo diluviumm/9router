@@ -205,6 +205,9 @@ export const __test__ = {
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
+  // Fork mael - fase-2 A2: healthz publik utk monitor portal (info non-sensitif)
+  if (pathname === "/api/healthz") return NextResponse.next();
+
   // Local-only gate for spawn-capable / host-secret routes.
   if (LOCAL_ONLY_PATHS.some((p) => pathname.startsWith(p))) {
     if (!(await canAccessLocalOnlyRoute(request))) {

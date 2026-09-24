@@ -1,8 +1,8 @@
 export default function manifest() {
   return {
-    name: '9Router - AI Infrastructure Management',
-    short_name: '9Router',
-    description: 'One endpoint for all your AI providers. Manage keys, monitor usage, and scale effortlessly.',
+    name: '9Router - Mael Stack',
+    short_name: '9Router·Mael',
+    description: 'Stack router AI Mael: satu endpoint, monitor, dan fallback mimo.',
     start_url: '/',
     display: 'standalone',
     background_color: '#0a0a0a',
