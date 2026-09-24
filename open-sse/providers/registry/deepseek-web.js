@@ -1,0 +1,32 @@
+export default {
+  id: "deepseek-web",
+  priority: 50,
+  alias: "deepseek-web",
+  display: {
+    name: "DeepSeek Web",
+    icon: "cloud",
+    color: "#6B7280",
+    textIcon: "DW",
+    website: "https://chat.deepseek.com",
+  },
+  category: "webCookie",
+  transport: {
+    baseUrl: "https://chat.deepseek.com/api/v0/chat/completion",
+  },
+  models: [
+    { id: "deepseek-v4-pro", name: "DeepSeek V4 Pro" },
+    { id: "deepseek-v4-pro-think", name: "DeepSeek V4 Pro Think" },
+    { id: "deepseek-v4-pro-search", name: "DeepSeek V4 Pro Search" },
+    { id: "deepseek-v4-pro-think-search", name: "DeepSeek V4 Pro Think+Search" },
+    { id: "deepseek-v4-flash", name: "DeepSeek V4 Flash" },
+    { id: "deepseek-v4-flash-think", name: "DeepSeek V4 Flash Think" },
+    { id: "deepseek-v4-flash-search", name: "DeepSeek V4 Flash Search" },
+    { id: "deepseek-v4-flash-think-search", name: "DeepSeek V4 Flash Think+Search" },
+    { id: "deepseek-chat", name: "DeepSeek Chat" },
+    { id: "deepseek-reasoner", name: "DeepSeek Reasoner" },
+    { id: "DeepSeek-R1", name: "DeepSeek R1" },
+    { id: "DeepSeek-R1-Search", name: "DeepSeek R1 Search" },
+    { id: "DeepSeek-V3.2", name: "DeepSeek V3.2" },
+    { id: "DeepSeek-Search", name: "DeepSeek Search" },
+  ],
+}

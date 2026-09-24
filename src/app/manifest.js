@@ -1,7 +1,7 @@
 export default function manifest() {
   return {
-    name: '9Router - Mael Stack',
-    short_name: '9Router·Mael',
+    name: 'MeAI - Mael Stack',
+    short_name: 'MeAI·Mael',
     description: 'Stack router AI Mael: satu endpoint, monitor, dan fallback mimo.',
     start_url: '/',
     display: 'standalone',

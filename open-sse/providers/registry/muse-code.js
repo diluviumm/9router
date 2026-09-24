@@ -1,0 +1,31 @@
+export default {
+  id: "muse-code",
+  priority: 50,
+  alias: "muse-code",
+  display: {
+    name: "Muse Code (Meta)",
+    icon: "cloud",
+    color: "#6B7280",
+    textIcon: "MC",
+    website: "https://ai.developer.meta.com/docs/muse-code/auth",
+  },
+  category: "oauth",
+  transport: {
+    baseUrl: "https://api.meta.ai/v1/responses",
+  },
+  models: [
+    { id: "muse-spark-1.3", name: "Muse Spark 1.3" },
+    { id: "muse-spark-1.3-contributor", name: "Muse Spark 1.3 Contributor" },
+    { id: "muse-spark-1.2", name: "Muse Spark 1.2" },
+    { id: "muse-spark-1.2-contributor", name: "Muse Spark 1.2 Contributor" },
+    { id: "muse-spark-1.1", name: "Muse Spark 1.1" },
+    { id: "llama-4-maverick", name: "Llama 4 Maverick" },
+    { id: "llama-4-scout", name: "Llama 4 Scout" },
+    { id: "llama-3.3-70b", name: "Llama 3.3 70B" },
+    { id: "llama-3.1-405b", name: "Llama 3.1 405B" },
+    { id: "llama-3.1-70b", name: "Llama 3.1 70B" },
+    { id: "llama-3.1-8b", name: "Llama 3.1 8B" },
+    { id: "llama-3.2-90b-vision", name: "Llama 3.2 90B Vision" },
+    { id: "llama-3.2-11b-vision", name: "Llama 3.2 11B Vision" },
+  ],
+}

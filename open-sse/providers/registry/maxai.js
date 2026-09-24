@@ -1,0 +1,31 @@
+export default {
+  id: "maxai",
+  priority: 50,
+  alias: "maxai",
+  display: {
+    name: "MaxAI",
+    icon: "cloud",
+    color: "#6B7280",
+    textIcon: "MA",
+    website: "https://www.maxai.co",
+  },
+  category: "webCookie",
+  transport: {
+    baseUrl: "https://api.maxai.me",
+  },
+  models: [
+    { id: "gpt-5.6-luna", name: "GPT-5.6 Luna" },
+    { id: "claude-haiku-4-5", name: "Claude Haiku 4.5" },
+    { id: "gemini-3-1-flash-lite", name: "Gemini 3.1 Flash Lite" },
+    { id: "grok-4-1-fast-non-reasoning", name: "Grok 4.1 Fast" },
+    { id: "llama-3.3-70b", name: "Llama 3.3 70B" },
+    { id: "deepseek-v3.2", name: "DeepSeek V3.2" },
+    { id: "gpt-5.6", name: "GPT-5.6" },
+    { id: "claude-5-sonnet", name: "Claude 5 Sonnet" },
+    { id: "grok-4-1-fast-reasoning", name: "Grok 4.1 Fast (Reasoning)" },
+    { id: "gpt-5.6-thinking", name: "GPT-5.6 Thinking" },
+    { id: "gemini-3.1-pro-preview", name: "Gemini 3.1 Pro Preview" },
+    { id: "grok-4.5", name: "Grok 4.5" },
+    { id: "deepseek-r1", name: "DeepSeek R1" },
+  ],
+}

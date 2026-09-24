@@ -1,0 +1,31 @@
+export default {
+  id: "volcengine-agent-plan",
+  priority: 50,
+  alias: "volcengine-agent-plan",
+  display: {
+    name: "Volcengine Ark Agent Plan",
+    icon: "cloud",
+    color: "#6B7280",
+    textIcon: "VA",
+    website: "https://console.volcengine.com/ark/region:cn-beijing/subscription/agent-plan",
+  },
+  category: "apikey",
+  transport: {
+    baseUrl: "https://ark.cn-beijing.volces.com/api/plan/v3/chat/completions",
+    validateUrl: "https://ark.cn-beijing.volces.com/api/plan/v3/models",
+  },
+  models: [
+    { id: "doubao-seed-evolving", name: "Doubao Seed Evolving (Agent Plan)" },
+    { id: "doubao-seed-2-1-turbo-260628", name: "Doubao Seed 2.1 Turbo (Agent Plan)" },
+    { id: "doubao-seed-2-0-lite-260215", name: "Doubao Seed 2.0 Lite (Agent Plan)" },
+    { id: "doubao-seed-2-0-mini-260215", name: "Doubao Seed 2.0 Mini (Agent Plan)" },
+    { id: "deepseek-v4-flash-ga-260731", name: "DeepSeek V4 Flash GA (Agent Plan)" },
+    { id: "kimi-k3", name: "Kimi K3 (Agent Plan)" },
+    { id: "glm-5-2-260617", name: "GLM 5.2 (Agent Plan)" },
+    { id: "kimi-k2.7-code", name: "Kimi K2.7 Code (Agent Plan)" },
+    { id: "minimax-m3", name: "MiniMax M3 (Agent Plan)" },
+    { id: "deepseek-v4-pro-260425", name: "DeepSeek V4 Pro (Agent Plan)" },
+    { id: "minimax-m2.7", name: "MiniMax M2.7 (Agent Plan)" },
+    { id: "kimi-k2.6", name: "Kimi K2.6 (Agent Plan)" },
+  ],
+}
