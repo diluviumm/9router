@@ -101,3 +101,8 @@ graphify-out/*
 .start-dev.ps1
 start-dev-silent.cjs
 debug.log
+
+# FORK-MAEL: artefak lokal, jangan di-track
+*.bak-*
+9router-0.5.86.tgz
+PLAN-FITUR.md
