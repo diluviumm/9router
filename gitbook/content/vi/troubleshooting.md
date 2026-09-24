@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Các vấn đề và giải pháp phổ biến khi dùng 9Router.
+Các vấn đề và giải pháp phổ biến khi dùng MeAI.
 
 ---
 
@@ -78,7 +78,7 @@ Các vấn đề và giải pháp phổ biến khi dùng 9Router.
 **Giải pháp:**
 
 1. **Auto-refresh (mặc định):**
-   9Router tự refresh tokens. Đợi 30 giây rồi thử lại.
+   MeAI tự refresh tokens. Đợi 30 giây rồi thử lại.
 
 2. **Kết nối lại thủ công:**
    ```
@@ -135,15 +135,15 @@ Các vấn đề và giải pháp phổ biến khi dùng 9Router.
 **Vấn đề:** Lỗi "ECONNREFUSED" hoặc "Cannot connect to localhost:20128".
 
 **Nguyên nhân:**
-- 9Router không chạy
+- MeAI không chạy
 - Port 20128 bị chặn
 - Firewall chặn kết nối
 
 **Giải pháp:**
 
-1. **Khởi động 9Router:**
+1. **Khởi động MeAI:**
    ```bash
-   9router
+   meai
    ```
    Dashboard sẽ mở tại http://localhost:3000
 
@@ -175,15 +175,15 @@ Các vấn đề và giải pháp phổ biến khi dùng 9Router.
 
 **Nguyên nhân:**
 - Port 3000 đã được dùng
-- 9Router bị crash
+- MeAI bị crash
 - Vấn đề cache browser
 
 **Giải pháp:**
 
-1. **Kiểm tra 9Router có chạy không:**
+1. **Kiểm tra MeAI có chạy không:**
    ```bash
    # Check process
-   ps aux | grep 9router
+   ps aux | grep meai
    
    # Check port 3000
    lsof -i :3000
@@ -199,13 +199,13 @@ Các vấn đề và giải pháp phổ biến khi dùng 9Router.
    taskkill /PID <PID> /F
    ```
 
-3. **Khởi động lại 9Router:**
+3. **Khởi động lại MeAI:**
    ```bash
    # Stop
-   pkill -f 9router
+   pkill -f meai
    
    # Start
-   9router
+   meai
    ```
 
 4. **Xóa cache browser:**

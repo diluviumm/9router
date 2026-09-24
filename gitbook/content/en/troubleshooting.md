@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Common issues and solutions when using 9Router.
+Common issues and solutions when using MeAI.
 
 ---
 
@@ -78,7 +78,7 @@ Common issues and solutions when using 9Router.
 **Solutions:**
 
 1. **Auto-refresh (default):**
-   9Router automatically refreshes tokens. Wait 30 seconds and retry.
+   MeAI automatically refreshes tokens. Wait 30 seconds and retry.
 
 2. **Manual reconnect:**
    ```
@@ -135,15 +135,15 @@ Common issues and solutions when using 9Router.
 **Problem:** "ECONNREFUSED" or "Cannot connect to localhost:20128".
 
 **Causes:**
-- 9Router not running
+- MeAI not running
 - Port 20128 blocked
 - Firewall blocking connection
 
 **Solutions:**
 
-1. **Start 9Router:**
+1. **Start MeAI:**
    ```bash
-   9router
+   meai
    ```
    Dashboard should open at http://localhost:3000
 
@@ -175,15 +175,15 @@ Common issues and solutions when using 9Router.
 
 **Causes:**
 - Port 3000 already in use
-- 9Router crashed
+- MeAI crashed
 - Browser cache issues
 
 **Solutions:**
 
-1. **Check if 9Router is running:**
+1. **Check if MeAI is running:**
    ```bash
    # Check process
-   ps aux | grep 9router
+   ps aux | grep meai
    
    # Check port 3000
    lsof -i :3000
@@ -199,13 +199,13 @@ Common issues and solutions when using 9Router.
    taskkill /PID <PID> /F
    ```
 
-3. **Restart 9Router:**
+3. **Restart MeAI:**
    ```bash
    # Stop
-   pkill -f 9router
+   pkill -f meai
    
    # Start
-   9router
+   meai
    ```
 
 4. **Clear browser cache:**

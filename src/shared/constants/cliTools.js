@@ -121,7 +121,7 @@ export const CLI_TOOLS = {
     color: "#1F6FEB",
     description: "GitHub Copilot in VS Code via MeAI extension",
     configType: "guide",
-    docsUrl: "https://marketplace.visualstudio.com/items?itemName=hotrungnhan.9router-for-github-copilot",
+    docsUrl: "https://marketplace.visualstudio.com/items?itemName=hotrungnhan.meai-for-github-copilot",
     guideSteps: [
       {
         step: 1,
@@ -395,7 +395,7 @@ amp --model "{{model}}"
       },
       {
         type: "info",
-        text: "After Apply, run grok (or /model 9router) to use the routed model. Switch back anytime with /model grok-build.",
+        text: "After Apply, run grok (or /model meai) to use the routed model. Switch back anytime with /model grok-build.",
       },
       {
         type: "warning",

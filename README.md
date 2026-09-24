@@ -1,8 +1,8 @@
 # MeAI — Mael Stack
 
-**MeAI** adalah fork pribadi dari [9router](https://github.com/decolua/9router) (v0.5.86) — satu gateway lokal yang menerjemahkan satu endpoint OpenAI/Anthropic-compatible menjadi puluhan provider AI. Fork ini sudah dibersihkan dari elemen promosi upstream, diganti merek menjadi **MeAI**, dan diintegrasikan penuh ke sistem setup Hermes (portal, tunnel Cloudflare, backup otomatis).
+**MeAI** adalah fork pribadi dari [meai](https://github.com/decolua/9router) (v0.5.86) — satu gateway lokal yang menerjemahkan satu endpoint OpenAI/Anthropic-compatible menjadi puluhan provider AI. Fork ini sudah dibersihkan dari elemen promosi upstream, diganti merek menjadi **MeAI**, dan diintegrasikan penuh ke sistem setup Hermes (portal, tunnel Cloudflare, backup otomatis).
 
-> Nama CLI/intern tetap `9router` (perintah, direktori `~/.9router`, header API `x-9r-*`, port `20128`) agar kompatibilitas config tidak rusak — hanya merek tampilan yang berubah menjadi MeAI.
+> Nama CLI/intern tetap `meai` (perintah, direktori `~/.meai`, header API `x-9r-*`, port `20128`) agar kompatibilitas config tidak rusak — hanya merek tampilan yang berubah menjadi MeAI.
 
 ## Ringkasan Angka
 
@@ -20,7 +20,7 @@
 | URL | Isi |
 |---|---|
 | `https://meai.ishmly.space` | Dashboard **MeAI** (alias branding) |
-| `https://router.ishmly.space` | Dashboard 9router (jalur lama, tetap jalan) |
+| `https://router.ishmly.space` | Dashboard meai (jalur lama, tetap jalan) |
 | `https://*.ishmly.space` | Portal Hermes (monitoring lintas service) |
 | `http://127.0.0.1:20128` | Proxy utama (localhost) |
 | `GET /api/healthz` · `GET /api/health` | Status sehat gateway |
@@ -50,8 +50,8 @@ Setiap tool punya halaman detail: panduan konfigurasi (guide), deteksi status te
 - **Atribusi**: `PLAN-FITUR.md` (DoD 6/6), `NOTICE.txt` (pengingat kontribusi upstream).
 
 ### Integrasi Hermes (otomatis, zero-touch)
-- **Portal** `ishmly.space` (port 9080): pill status 9router (healthz tiap 90 dtk), pill usage (data 15 menit dari cron), **banner availability koneksi** (cron per jam), modal rincian usage & sistem.
-- **Backup DB** (`~/.9router/db/data.sqlite`) → lokal (rotasi 7 hari) + GDrive `Seagate Backup/9router/` — cron harian 03:25.
+- **Portal** `ishmly.space` (port 9080): pill status meai (healthz tiap 90 dtk), pill usage (data 15 menit dari cron), **banner availability koneksi** (cron per jam), modal rincian usage & sistem.
+- **Backup DB** (`~/.meai/db/data.sqlite`) → lokal (rotasi 7 hari) + GDrive `Seagate Backup/meai/` — cron harian 03:25.
 - **Catalog-sync** (4.686 model) & **upstream-check** (fork vs decolua) — cron harian 03:25.
 - **Ingress tunnel** Cloudflare (YAML objek tervalidasi): `meai.` dan `router.` → 20128.
 
@@ -66,14 +66,14 @@ export OPENAI_API_KEY=<API key MeAI>
 export ANTHROPIC_BASE_URL=http://127.0.0.1:20128
 ```
 
-Jalankan dashboard: `9router` (port 20128), lalu buka `https://meai.ishmly.space`.
+Jalankan dashboard: `meai` (port 20128), lalu buka `https://meai.ishmly.space`.
 
 ## Rollback
 
-Tarball upstream bersih: `~/me/forks/rollback/9router-0.5.86.tgz`. Semua patch fork punya backup `.bak-*` lokal dan tercatat di git (cabang `mael/fork`).
+Tarball upstream bersih: `~/me/forks/rollback/meai-0.5.86.tgz`. Semua patch fork punya backup `.bak-*` lokal dan tercatat di git (cabang `mael/fork`).
 
 ## Kredit
 
-- Upstream: [decolua/9router](https://github.com/decolua/9router) (MIT) — struktur dasar, proxy, dashboard.
+- Upstream: [decolua/meai](https://github.com/decolua/9router) (MIT) — struktur dasar, proxy, dashboard.
 - Katalog provider & daftar CLI tool mengacu ke [diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute) (data, bukan kode).
 - Fork & integrasi: Mael.
