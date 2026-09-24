@@ -5,7 +5,7 @@ description: Generate vector embeddings via MeAI /v1/embeddings using OpenAI / G
 
 # MeAI — Embeddings
 
-Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai/SKILL.md for setup.
+Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai/SKILL.md for setup.
 
 ## Discover
 

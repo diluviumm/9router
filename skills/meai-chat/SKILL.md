@@ -5,7 +5,7 @@ description: Chat / code generation via MeAI using OpenAI /v1/chat/completions o
 
 # MeAI — Chat
 
-Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai/SKILL.md for setup.
+Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai/SKILL.md for setup.
 
 ## Endpoints
 

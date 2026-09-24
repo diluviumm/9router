@@ -1265,13 +1265,13 @@ Tài liệu tham khảo kiến trúc đầy đủ: [`docs/ARCHITECTURE.md`](../d
 
 Cảm ơn tất cả những người đã đóng góp giúp MeAI tốt hơn!
 
-[![Contributors](https://contrib.rocks/image?repo=decolua/meai&max=100&columns=20&anon=1)](https://github.com/decolua/9router/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=decolua/9router&max=100&columns=20&anon=1)](https://github.com/decolua/9router/graphs/contributors)
 
 ---
 
 ## 📊 Star Chart
 
-[![ Chart](https://starchart.cc/decolua/meai.svg?variant=adaptive)](https://starchart.cc/decolua/meai)
+[![ Chart](https://starchart.cc/decolua/9router.svg?variant=adaptive)](https://starchart.cc/decolua/9router)
 
 ### Cách Đóng góp
 

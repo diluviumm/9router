@@ -5,7 +5,7 @@ description: Generate videos via MeAI /v1/videos/generations using xAI Grok Imag
 
 # MeAI — Video Generation (xAI Grok Imagine)
 
-Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai/SKILL.md for setup.
+Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai/SKILL.md for setup.
 
 Requires a connected **xAI account** in the MeAI dashboard — either **Grok Build OAuth** (SuperGrok / X Premium+ subscription sign-in) or a direct **xAI API key** from console.x.ai. The two are separate auth types with separate billing; the dashboard shows which one each connection uses.
 

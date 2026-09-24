@@ -876,7 +876,7 @@ docker run -d \
   -v meai-data:/app/data \
   -e PORT=20128 \
   -e BASE_URL=http://localhost:20128 \
-  ghcr.io/decolua/meai:latest
+  ghcr.io/decolua/9router:latest
 ```
 
 Dashboard: `http://localhost:20128/dashboard`

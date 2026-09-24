@@ -5,7 +5,7 @@ description: Speech-to-text via MeAI /v1/audio/transcriptions using OpenAI Whisp
 
 # MeAI — Speech-to-Text
 
-Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai/SKILL.md for setup.
+Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai/SKILL.md for setup.
 
 ## Discover
 

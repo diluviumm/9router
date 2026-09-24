@@ -1,8 +1,8 @@
-# PLAN-FITUR Fork MeAI — `diluviumm/meai`
+# PLAN-FITUR Fork MeAI — `diluviumm/9router`
 Dibuat: 24 Sep 2026 · Codename `rantai-manis` · Status: **MENUNGGU APPROVAL Mael** sebelum implementasi
 
 ## 0. Baseline (terverifikasi)
-- Fork: `github.com/diluviumm/9router` ← upstream `decolua/meai` (MIT, 29.7k★), branch **master**, HEAD `39e36d3d` = **v0.5.86** = versi terpasang.
+- Fork: `github.com/diluviumm/9router` ← upstream `decolua/9router` (MIT, 29.7k★), branch **master**, HEAD `39e36d3d` = **v0.5.86** = versi terpasang.
 - Clone lokal: `~/me/github/meai` (remotes origin+upstream siap; sync saat ini **0**).
 - Stack: Next.js `src/` 4.3MB (app page/layout, `proxy.js`, `mitm/`, `lib/`, `i18n/`, `store/` zustand, `models/`) + `cli/` + `scripts/` (bundle `scripts/build-cli.js` → `cli.js`) + Docker stack + gitbook docs.
 - Runtime: prefix `~/.local/node22`, unit **`meai.service` (`--skip-update`)**, port **20128**, ingress `router.ishmly.space`→20128 (named tunnel), data `~/.meai`.
@@ -30,7 +30,7 @@ Dibuat: 24 Sep 2026 · Codename `rantai-manis` · Status: **MENUNGGU APPROVAL Ma
 ## 3. PLAYBOOK UPDATE SELEKTIF (inti fork ini)
 ```bash
 cd ~/me/github/meai
-git fetch upstream                    # pantau decolua/meai
+git fetch upstream                    # pantau decolua/9router
 git log --oneline HEAD..upstream/master   # lihat apa yang baru
 # per-file selective (AMAN - file yang kita hapus jangan diambil):
 git checkout upstream/master -- src/lib/proxy.js src/mitm/server.js   # contoh file core bugfix

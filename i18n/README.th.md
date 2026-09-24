@@ -708,7 +708,7 @@ Authorization: Bearer your-api-key
 
 ขอขอบคุณผู้มีส่วนร่วมทุกคนที่ช่วยทำให้ MeAI ดียิ่งขึ้น!
 
-[![Contributors](https://contrib.rocks/image?repo=decolua/meai&max=150&columns=15&anon=1)](https://github.com/decolua/9router/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=decolua/9router&max=150&columns=15&anon=1)](https://github.com/decolua/9router/graphs/contributors)
 
 ---
 

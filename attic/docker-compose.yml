@@ -1,6 +1,6 @@
 services:
   meai:
-    image: decolua/meai:latest
+    image: decolua/9router:latest
     container_name: meai
     restart: always
     ports:

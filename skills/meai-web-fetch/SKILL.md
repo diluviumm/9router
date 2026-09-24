@@ -5,7 +5,7 @@ description: Fetch URL → markdown / text / HTML via MeAI /v1/web/fetch using O
 
 # MeAI — Web Fetch
 
-Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai/SKILL.md for setup.
+Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai/SKILL.md for setup.
 
 ## Discover
 

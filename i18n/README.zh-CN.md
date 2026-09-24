@@ -1264,13 +1264,13 @@ OPENAI_API_KEY="your-cloud-key" bash tester/security/test-cloud-openai-compatibl
 
 感谢所有帮助让 MeAI 变得更好的贡献者！
 
-[![Contributors](https://contrib.rocks/image?repo=decolua/meai&max=100&columns=20&anon=1)](https://github.com/decolua/9router/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=decolua/9router&max=100&columns=20&anon=1)](https://github.com/decolua/9router/graphs/contributors)
 
 ---
 
 ## 📊 Star 图表
 
-[![Star Chart](https://starchart.cc/decolua/meai.svg?variant=adaptive)](https://starchart.cc/decolua/meai)
+[![Star Chart](https://starchart.cc/decolua/9router.svg?variant=adaptive)](https://starchart.cc/decolua/9router)
 
 ### 如何贡献
 

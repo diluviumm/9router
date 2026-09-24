@@ -74,6 +74,6 @@ Tarball upstream bersih: `~/me/forks/rollback/meai-0.5.86.tgz`. Semua patch fork
 
 ## Kredit
 
-- Upstream: [decolua/meai](https://github.com/decolua/9router) (MIT) — struktur dasar, proxy, dashboard.
+- Upstream: [decolua/9router](https://github.com/decolua/9router) (MIT) — struktur dasar, proxy, dashboard.
 - Katalog provider & daftar CLI tool mengacu ke [diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute) (data, bukan kode).
 - Fork & integrasi: Mael.

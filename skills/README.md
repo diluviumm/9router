@@ -8,22 +8,22 @@ Drop-in skills for any AI agent (Claude, Cursor, ChatGPT, custom SDK). Just **co
 
 | Capability | Copy link below and paste to your AI |
 |---|---|
-| **Entry / Setup** (start here) | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai/SKILL.md |
-| Chat / code-gen | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-chat/SKILL.md |
-| Image generation | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-image/SKILL.md |
-| Video generation (xAI Grok Imagine) | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-video/SKILL.md |
-| Text-to-speech | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-tts/SKILL.md |
-| Speech-to-text | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-stt/SKILL.md |
-| Embeddings | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-embeddings/SKILL.md |
-| Web search | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-web-search/SKILL.md |
-| Web fetch (URL → markdown) | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-web-fetch/SKILL.md |
+| **Entry / Setup** (start here) | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai/SKILL.md |
+| Chat / code-gen | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-chat/SKILL.md |
+| Image generation | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-image/SKILL.md |
+| Video generation (xAI Grok Imagine) | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-video/SKILL.md |
+| Text-to-speech | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-tts/SKILL.md |
+| Speech-to-text | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-stt/SKILL.md |
+| Embeddings | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-embeddings/SKILL.md |
+| Web search | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-web-search/SKILL.md |
+| Web fetch (URL → markdown) | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-web-fetch/SKILL.md |
 
 ## How to use
 
 Paste to your AI (Claude, Cursor, ChatGPT, …):
 
 ```
-Read this skill and use it: https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai/SKILL.md
+Read this skill and use it: https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai/SKILL.md
 ```
 
 Then ask normally — *"generate an image of a cat"*, *"transcribe this URL"*, etc.

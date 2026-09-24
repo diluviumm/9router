@@ -46,13 +46,13 @@ When the user needs a specific capability, fetch that skill's `SKILL.md` from it
 
 | Capability | Raw URL |
 |---|---|
-| Chat / code-gen | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-chat/SKILL.md |
-| Image generation | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-image/SKILL.md |
-| Text-to-speech | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-tts/SKILL.md |
-| Speech-to-text | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-stt/SKILL.md |
-| Embeddings | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-embeddings/SKILL.md |
-| Web search | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-web-search/SKILL.md |
-| Web fetch (URL → markdown) | https://raw.githubusercontent.com/decolua/meai/refs/heads/master/skills/meai-web-fetch/SKILL.md |
+| Chat / code-gen | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-chat/SKILL.md |
+| Image generation | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-image/SKILL.md |
+| Text-to-speech | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-tts/SKILL.md |
+| Speech-to-text | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-stt/SKILL.md |
+| Embeddings | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-embeddings/SKILL.md |
+| Web search | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-web-search/SKILL.md |
+| Web fetch (URL → markdown) | https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/meai-web-fetch/SKILL.md |
 
 ## Errors
 

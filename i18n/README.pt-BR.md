@@ -9,7 +9,7 @@
   
   [![npm](https://img.shields.io/npm/v/meai.svg)](https://www.npmjs.com/package/meai)
   [![Downloads](https://img.shields.io/npm/dm/meai.svg)](https://www.npmjs.com/package/meai)
-  [![Docker Pulls](https://img.shields.io/docker/pulls/decolua/meai.svg?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/decolua/meai)
+  [![Docker Pulls](https://img.shields.io/docker/pulls/decolua/9router.svg?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/decolua/9router)
   [![GHCR](https://img.shields.io/badge/GHCR-decolua%2Fmeai-blue?logo=github)](https://github.com/decolua/9router/pkgs/container/meai)
   [![Licença](https://img.shields.io/npm/l/meai.svg)](https://github.com/decolua/9router/blob/main/LICENSE)
 
@@ -1239,8 +1239,8 @@ pm2 startup
 
 Imagens publicadas (multiplataforma `linux/amd64` + `linux/arm64`):
 
-- Hub Docker: [`decolua/meai`](https://hub.docker.com/r/decolua/meai)
-- GHCR: [`ghcr.io/decolua/meai`](https://github.com/decolua/9router/pkgs/container/meai)
+- Hub Docker: [`decolua/9router`](https://hub.docker.com/r/decolua/9router)
+- GHCR: [`ghcr.io/decolua/9router`](https://github.com/decolua/9router/pkgs/container/meai)
 
 **Início rápido (use imagem publicada):**
 
@@ -1250,7 +1250,7 @@ docker run -d \
   -p 20128:20128 \
   -v "$HOME/.meai:/app/data" \
   -e DATA_DIR=/app/data \
-  decolua/meai:latest
+  decolua/9router:latest
 ```
 
 → Abra http://localhost:20128
@@ -1276,7 +1276,7 @@ docker run -d --name meai -p 20128:20128 \
 docker logs -f meai
 docker restart meai
 docker stop meai && docker rm meai
-docker pull decolua/meai:latest   # atualizar para a versão mais recente
+docker pull decolua/9router:latest   # atualizar para a versão mais recente
 ```
 
 **Persistência de dados:** `$HOME/.meai/db/data.sqlite` no host ↔ `/app/data/db/data.sqlite` no contêiner.
@@ -1487,13 +1487,13 @@ Authorization: Bearer your-api-key
 
 Obrigado a todos os colaboradores que ajudaram a tornar o MeAI melhor!
 
-[![Contribuidores](https://contrib.rocks/image?repo=decolua/meai&max=150&columns=15&anon=1&v=20260309)](https://github.com/decolua/9router/graphs/contributors)
+[![Contribuidores](https://contrib.rocks/image?repo=decolua/9router&max=150&columns=15&anon=1&v=20260309)](https://github.com/decolua/9router/graphs/contributors)
 
 ---
 
 ## 📊 Gráfico de estrelas
 
-[![Gráfico de estrelas](https://starchart.cc/decolua/meai.svg?variant=adaptive)](https://starchart.cc/decolua/meai)
+[![Gráfico de estrelas](https://starchart.cc/decolua/9router.svg?variant=adaptive)](https://starchart.cc/decolua/9router)
 
 ## 🔀 Forks
 

@@ -6,7 +6,7 @@
 
 [![npm](https://img.shields.io/npm/v/meai.svg)](https://www.npmjs.com/package/meai)
 [![Downloads](https://img.shields.io/npm/dm/meai.svg)](https://www.npmjs.com/package/meai)
-[![Docker Pulls](https://img.shields.io/docker/pulls/decolua/meai.svg?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/decolua/meai)
+[![Docker Pulls](https://img.shields.io/docker/pulls/decolua/9router.svg?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/decolua/9router)
 [![GHCR](https://img.shields.io/badge/GHCR-decolua%2Fmeai-blue?logo=github)](https://github.com/decolua/9router/pkgs/container/meai)
 [![License](https://img.shields.io/npm/l/meai.svg)](https://github.com/decolua/9router/blob/main/LICENSE)
 
@@ -52,10 +52,10 @@ npx meai
 ```bash
 docker run -d --name meai -p 20128:20128 \
   -v "$HOME/.meai:/app/data" -e DATA_DIR=/app/data \
-  decolua/meai:latest
+  decolua/9router:latest
 ```
 
-Published images: [Docker Hub](https://hub.docker.com/r/decolua/meai) • [GHCR](https://github.com/decolua/9router/pkgs/container/meai) (multi-platform amd64/arm64).
+Published images: [Docker Hub](https://hub.docker.com/r/decolua/9router) • [GHCR](https://github.com/decolua/9router/pkgs/container/meai) (multi-platform amd64/arm64).
 
 🎉 Dashboard opens at `http://localhost:20128`
 
