@@ -14,6 +14,9 @@ npm i -g ./9router-<versi>.tgz
 
 - Dashboard: `http://127.0.0.1:20128/dashboard` (login, password akun)
 - API: `ANTHROPIC_BASE_URL=http://127.0.0.1:20128` utk klien Claude-compatible
+  - contoh: `export ANTHROPIC_BASE_URL=http://127.0.0.1:20128` lalu jalankan Claude Code / klien Anthropic-compatible lain (auth: pakai API key akun Anda sendiri via dashboard9router → API Keys) — **A4-F4**
+  - tes cepat: `curl -s http://127.0.0.1:20128/api/healthz` → `{"ok":true,...}` (healthz publik, fase-2)
+  - klien OpenAI-compatible: `OPENAI_BASE_URL=http://127.0.0.1:20128/v1`
 - Healthcheck publik: `GET /api/healthz` → `{ok, service, version, uptime_s}`
 
 ## Konfigurasi lokal (stack Mael)
