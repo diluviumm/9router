@@ -34,7 +34,7 @@ export default function ToolDetailClient({ toolId, machineId }) {
           fetch("/api/providers"),
           fetch("/api/settings"),
           fetch("/api/tunnel/status"),
-          fetch("/api/keys"),
+          fetch("/api/keys?reveal=1"),
         ]);
         if (!mounted) return;
         if (provRes.ok) {

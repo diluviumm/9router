@@ -256,7 +256,7 @@ export default function APIPageClient({ machineId }) {
   const fetchData = async () => {
     try {
       const fetchKeys = async () => {
-        const res = await fetch("/api/keys");
+        const res = await fetch("/api/keys?reveal=1");
         if (!res.ok) return [];
         const data = await res.json();
         return data.keys || [];

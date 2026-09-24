@@ -33,7 +33,7 @@ export default function MitmPageClient() {
 
   const fetchApiKeys = async () => {
     try {
-      const res = await fetch("/api/keys");
+      const res = await fetch("/api/keys?reveal=1");
       if (res.ok) {
         const data = await res.json();
         setApiKeys(data.keys || []);

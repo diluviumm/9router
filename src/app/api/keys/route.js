@@ -4,11 +4,19 @@ import { getConsistentMachineId } from "@/shared/utils/machineId";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/keys - List API keys
-export async function GET() {
+// GET /api/keys - List API keys (masked by default; ?reveal=1 utk nilai penuh — A3-mask)
+function maskKey(k) {
+  const s = String(k || "");
+  if (s.length <= 8) return "****";
+  return s.slice(0, 3) + "…" + s.slice(-4);
+}
+
+export async function GET(request) {
   try {
+    const reveal = request?.nextUrl?.searchParams?.get("reveal") === "1";
     const keys = await getApiKeys();
-    return NextResponse.json({ keys });
+    const safe = reveal ? keys : keys.map((k) => ({ ...k, key: maskKey(k.key), masked: !reveal }));
+    return NextResponse.json({ keys: safe });
   } catch (error) {
     console.log("Error fetching keys:", error);
     return NextResponse.json({ error: "Failed to fetch keys" }, { status: 500 });
