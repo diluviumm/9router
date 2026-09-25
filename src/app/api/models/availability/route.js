@@ -25,6 +25,8 @@ export async function GET() {
     const models = [];
 
     for (const connection of connections) {
+      // FIX r24: connection inactive by design (keep-list/disabled) bukan "unavailable"
+      if (connection.isActive === false) continue;
       const locks = getActiveModelLocks(connection);
       for (const lock of locks) {
         models.push({
