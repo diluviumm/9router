@@ -1,11 +1,11 @@
-# PLAN-FITUR Fork MeAI — `diluviumm/9router`
+# PLAN-FITUR Fork MeAI — `diluviumm/meai`
 Dibuat: 24 Sep 2026 · Codename `rantai-manis` · Status: **MENUNGGU APPROVAL Mael** sebelum implementasi
 
 ## 0. Baseline (terverifikasi)
-- Fork: `github.com/diluviumm/9router` ← upstream `decolua/9router` (MIT, 29.7k★), branch **master**, HEAD `39e36d3d` = **v0.5.86** = versi terpasang.
+- Fork: `github.com/diluviumm/meai` ← upstream `decolua/9router` (MIT, 29.7k★), branch **master**, HEAD `39e36d3d` = **v0.5.86** = versi terpasang.
 - Clone lokal: `~/me/github/meai` (remotes origin+upstream siap; sync saat ini **0**).
 - Stack: Next.js `src/` 4.3MB (app page/layout, `proxy.js`, `mitm/`, `lib/`, `i18n/`, `store/` zustand, `models/`) + `cli/` + `scripts/` (bundle `scripts/build-cli.js` → `cli.js`) + Docker stack + gitbook docs.
-- Runtime: prefix `~/.local/node22`, unit **`meai.service` (`--skip-update`)**, port **20128**, ingress `router.ishmly.space`→20128 (named tunnel), data `~/.meai`.
+- Runtime: prefix `~/.local/node22`, unit **`meai.service` (`--skip-update`)**, port **20128**, ingress `meai.ishmly.space`→20128 (named tunnel), data `~/.meai`.
 
 ## 1. LIST FITUR YANG DIHAPUS / DIMATIKAN
 | # | Fitur | Bukti di kode | Aksi | Prioritas |
@@ -39,7 +39,7 @@ git cherry-pick <hash>
 npm run build                         # bundle src/ -> cli.js (scripts/build-cli.js)
 npm install -g ~/me/github/meai    # pasang ke prefix ~/.local/node22
 systemctl --user restart meai.service
-# verifikasi: port 20128 + dashboard + tunnel router.ishmly.space
+# verifikasi: port 20128 + dashboard + tunnel meai.ishmly.space
 ```
 - **PR kecil-kecil di fork:** setiap fitur = commit terpisah di branch `mael/fork` (hindari 1 commit raksasa).
 - **Rollback:** `npm install -g meai@0.5.86` (paket resmi) + unit tetap `--skip-update`.
@@ -52,7 +52,7 @@ systemctl --user restart meai.service
 
 ## 5. KRITERIA SELESAI (definition of done)
 - [x] Build `npm run build` tanpa error. (BUILD_EXIT=0 tiap fase; fase-4 = README-only, tanpa build ulang)
-- [x] Unit `meai.service` active, port 20128 respons, `router.ishmly.space` via tunnel OK. (verifikasi rutin tiap ronde)
+- [x] Unit `meai.service` active, port 20128 respons, `meai.ishmly.space` via tunnel OK. (verifikasi rutin tiap ronde)
 - [x] Pencocokan outbound: TAK ADA request ke `9router.com` / analytics. (audit fase-3: grep kode aktif = NOL; log startup bersih; sisa hanya file .bak untracked)
 - [x] Updater & observability OFF (env default + kode). (route update/shutdown = 501; envFallback=false; ENABLE_REQUEST_LOGS verified OFF fase-4)
 - [x] Preset mimo tersedia. (combo `mael-mimo` = opencode-go mimo-v2.6-flash → pro → pro-ultraspeed; "terpilih" = saat ini Mael route langsung opencode-go,meai di-diamkan per permintaan)

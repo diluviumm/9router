@@ -20,7 +20,7 @@
 | URL | Isi |
 |---|---|
 | `https://meai.ishmly.space` | Dashboard **MeAI** (alias branding) |
-| `https://router.ishmly.space` | Dashboard meai (jalur lama, tetap jalan) |
+| `https://meai.ishmly.space` | Dashboard meai (jalur lama, tetap jalan) |
 | `https://*.ishmly.space` | Portal Hermes (monitoring lintas service) |
 | `http://127.0.0.1:20128` | Proxy utama (localhost) |
 | `GET /api/healthz` · `GET /api/health` | Status sehat gateway |
