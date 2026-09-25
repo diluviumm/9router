@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="./images/meai.png?1" alt="MeAI Dashboard" width="800"/>
+  <img src="./images/meai.png?2" alt="MeAI Dashboard" width="800"/>
   
   # MeAI - 免费 AI 路由器与 Token 节省器
   
