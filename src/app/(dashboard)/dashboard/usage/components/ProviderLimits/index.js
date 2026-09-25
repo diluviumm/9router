@@ -65,6 +65,29 @@ const AUTO_PING_TOOLTIPS = {
   codex: "Auto-starts the next 5h Codex window after reset by sending a tiny gpt-5.5 request. Consumes a small amount of quota.",
 };
 
+/** Ring gauge rata-rata sisa kuota per koneksi (ronde-26) */
+function QuotaRing({ pct }) {
+  if (pct === null || pct === undefined || Number.isNaN(pct)) return null;
+  const R = 16;
+  const C = 2 * Math.PI * R;
+  const color = pct > 70 ? "#a3d6a8" : pct >= 30 ? "#eec57f" : "#ffb4ab";
+  return (
+    <div className="relative size-9 shrink-0" title={`Rata-rata sisa kuota ${pct}%`}>
+      <svg viewBox="0 0 40 40" className="size-9 -rotate-90">
+        <circle cx="20" cy="20" r={R} fill="none" strokeWidth="4" className="stroke-black/10" />
+        <circle
+          cx="20" cy="20" r={R} fill="none" stroke={color} strokeWidth="4" strokeLinecap="round"
+          strokeDasharray={C} strokeDashoffset={C * (1 - Math.min(Math.max(pct, 0), 100) / 100)}
+          className="transition-all duration-500"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold" style={{ color }}>
+        {pct}%
+      </span>
+    </div>
+  );
+}
+
 function kiroMethodLabel(conn) {
   const m = conn.providerSpecificData?.authMethod;
   if (m && KIRO_METHOD_LABELS[m]) return KIRO_METHOD_LABELS[m];
@@ -824,7 +847,7 @@ export default function ProviderLimits() {
     <div className="space-y-6">
       {/* Header Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
             <button
               type="button"
@@ -1061,6 +1084,17 @@ export default function ProviderLimits() {
           const rawQuotas = quota?.quotas || [];
           const visibleQuotas = filterQuotasByVisibility(conn.provider, rawQuotas, quotaVisibility);
           const hiddenQuotaRows = getHiddenQuotaRows(conn.provider, rawQuotas, quotaVisibility);
+          const numericQ = rawQuotas.filter((q) => q && Number(q.total) > 0);
+          const avgRemaining = numericQ.length
+            ? Math.round(
+                numericQ.reduce((acc, q) => {
+                  const rem = q.remainingPercentage != null
+                    ? Number(q.remainingPercentage)
+                    : ((Number(q.total) - Number(q.used || 0)) / Number(q.total)) * 100;
+                  return acc + rem;
+                }, 0) / numericQ.length
+              )
+            : null;
 
           return (
             <Card
@@ -1139,7 +1173,9 @@ export default function ProviderLimits() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <QuotaRing pct={avgRemaining} />
+
                     {isCodex && (
                       <>
                         <Tooltip

@@ -76,6 +76,22 @@ Jalankan dashboard: `meai` (port 20128), lalu buka `https://meai.ishmly.space`.
 
 Tarball upstream bersih: `~/me/forks/rollback/meai-0.5.86.tgz`. Semua patch fork punya backup `.bak-*` lokal dan tercatat di git (cabang `mael/fork`).
 
+## Update dari Upstream (Web — tanpa cron)
+
+Cek & update fork **langsung dari dashboard** (ronde-26):
+
+1. Sidebar menampilkan status upstream otomatis saat dibuka (`N commit upstream` / `fork up-to-date`).
+2. Klik banner → modal daftar commit → tombol **Update & Build**.
+3. Proses jalan di unit `meai-fork-update` (`systemd-run --user`, terpisah dari server — aman walau app restart):
+   **cherry-pick commit aman** → **`npm run build`** → **restart `meai.service`** → healthz check.
+4. Selesai → klik **Muat ulang**.
+
+- API: `GET`/`POST /api/upstream` (wajib login — `ALWAYS_PROTECTED` di `dashboardGuard.js`).
+- Phase + log: `~/.hermes/state/meai-fork-update.txt` / `.log`.
+- Dry-run manual: `~/.hermes/scripts/meai-upstream-apply.sh` (tanpa `--apply`).
+- Detail seleksi & konflik: [`docs/UPSTREAM-SYNC.md`](docs/UPSTREAM-SYNC.md).
+- Cron check harian (03:25) **dihapus** — cek kini on-demand dari web.
+
 ## Kredit
 
 - Upstream: [decolua/9router](https://github.com/decolua/9router) (MIT) — struktur dasar, proxy, dashboard.

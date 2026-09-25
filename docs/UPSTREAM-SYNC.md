@@ -5,15 +5,19 @@
 > Update harus **selective** — bukan merge besar-besaran — supaya identitas fork tidak tertimpa
 > dan konflik bisa dihitung.
 
-## 1. Mekanisme yang sudah berjalan otomatis
+## 1. Mekanisme update (ronde-26: dari WEB, tanpa cron)
 
 | Komponen | Kapan | Fungsi |
 |---|---|---|
-| `meai-daily.timer` | tiap 03:25 WITA | menjalankan `meai-daily.sh` (backup DB + **upstream check** + catalog) |
-| `~/.hermes/scripts/meai-upstream.sh` | dipanggil daily | **CHECK-ONLY**: `git merge-base` + GitHub API `compare` → menyimpan `behind`/`status` ke `~/.hermes/state/meai-upstream.json` |
-| `~/.hermes/scripts/meai-upstream-apply.sh` | saat diminta (`--apply`) | **SELECTIVE APPLY**: cherry-pick commit upstream yang aman (lihat §3) |
+| Banner sidebar (fork) | saat dashboard dibuka | auto-`GET /api/upstream` → tampil "N commit upstream" / "fork up-to-date" |
+| `POST /api/upstream {action:"apply"}` | saat tombol **Update & Build** diklik | menjalankan unit `meai-fork-update` via `systemd-run --user` (TERPISAH dari server → aman walau app restart) |
+| `~/.hermes/scripts/meai-web-update.sh` | oleh unit tersebut | phase: **apply** (cherry-pick aman, lihat §3) → **build** → **restart** → healthz check; log/phase di `~/.hermes/state/meai-fork-update.{log,txt}` |
+| `~/.hermes/scripts/meai-upstream-apply.sh` | dipanggil web-update | **SELECTIVE APPLY**: cherry-pick commit upstream yang aman (lihat §3); dry-run bila tanpa `--apply` |
+| `~/.hermes/scripts/meai-upstream.sh` | manual / fallback | check-only on-demand (dulu via cron 03:25 — **cron check dihapus ronde-26**) |
 
-Check harian **tidak pernah mengubah repo** — hanya melapor. Apply selalu terpisah dan terkontrol.
+Check **tidak pernah mengubah repo** — hanya melapor. Apply selalu terpisah dan terkontrol
+(ditolak otomatis bila masih berjalan → 409; semua route `/api/upstream` wajib login ALWAYS_PROTECTED).
+
 
 ## 2. Kenapa selective (bukan `git pull upstream master`)
 

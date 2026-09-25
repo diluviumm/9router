@@ -5,17 +5,15 @@ import PropTypes from "prop-types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/shared/utils/cn";
-import { APP_CONFIG, UPDATER_CONFIG } from "@/shared/constants/config";
-import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
+import { APP_CONFIG } from "@/shared/constants/config";
 import Button from "./Button";
-import { ConfirmModal } from "./Modal";
+import Modal from "./Modal";
 
 
 const navItems = [
   { href: "/dashboard/endpoint", label: "Endpoint & Key", icon: "api" },
   { href: "/dashboard/providers", label: "Providers", icon: "dns" },
   // { href: "/dashboard/basic-chat", label: "Basic Chat", icon: "chat" }, // Hidden
-  { href: "/dashboard/combos", label: "Combo & Vision Adapter", icon: "layers" },
   { href: "/dashboard/usage", label: "Usage", icon: "bar_chart" },
   { href: "/dashboard/quota", label: "Quota Tracker", icon: "data_usage" },
   { href: "/dashboard/token-saver", label: "Token Saver", icon: "savings" },
@@ -25,22 +23,49 @@ const navItems = [
 
 const debugItems = [
   { href: "/dashboard/console-log", label: "Console Log", icon: "terminal" },
-  { href: "/dashboard/translator", label: "Translator", icon: "translate" },
 ];
 
 const systemItems = []; // FORK-MAEL: Proxy Pools + Skills dihapus dari menu (25 Sep 2026, reversible: git)
 
+/** Item navigasi sidebar — ronde-26 (rail glow + icon chip + hover transform) */
+function NavItem({ href, label, icon, active, onClose }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClose}
+      className={cn(
+        "relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 group",
+        active
+          ? "bg-gradient-to-r from-primary/[0.16] to-primary/[0.04] text-primary"
+          : "text-text-muted hover:bg-surface-2/70 hover:text-text-main hover:translate-x-[2px]"
+      )}
+    >
+      {active && (
+        <span aria-hidden className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-primary shadow-[0_0_10px_var(--color-primary)]" />
+      )}
+      <span
+        className={cn(
+          "flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors",
+          active ? "bg-primary/15" : "bg-white/[0.03] group-hover:bg-white/[0.07]"
+        )}
+      >
+        <span className={cn("material-symbols-outlined text-[17px]", active ? "fill-1 text-primary" : "group-hover:text-primary transition-colors")}>
+          {icon}
+        </span>
+      </span>
+      <span className="text-[13px] font-medium tracking-[0.01em]">{label}</span>
+    </Link>
+  );
+}
+
 export default function Sidebar({ onClose }) {
   const pathname = usePathname();
-  const [isDisconnected, setIsDisconnected] = useState(false);
-  const [updateInfo, setUpdateInfo] = useState(null);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [shutdownCountdown, setShutdownCountdown] = useState(0);
+  const [forkCheck, setForkCheck] = useState(null);   // {behind, commits, dirtyFiles, logTail, error}
+  const [forkState, setForkState] = useState(null);   // fase proses update dari server
+  const [showForkModal, setShowForkModal] = useState(false);
+  const [forkApplying, setForkApplying] = useState(false);
   const [enableTranslator, setEnableTranslator] = useState(false);
-  const { copied, copy } = useCopyToClipboard(2000);
-
-  const INSTALL_CMD = UPDATER_CONFIG.installCmdLatest;
+  const forkBusy = typeof forkState === "string" && /^(queued|apply|build|restart)/.test(forkState);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -49,12 +74,19 @@ export default function Sidebar({ onClose }) {
       .catch(() => {});
   }, []);
 
-  // Lazy check for new npm version on mount
+  // Fork update (ronde-26): auto-check upstream saat mount + poll fase proses (web-based, tanpa cron)
   useEffect(() => {
-    fetch("/api/version")
-      .then(res => res.json())
-      .then(data => { if (data.hasUpdate) setUpdateInfo(data); })
-      .catch(() => {});
+    let alive = true;
+    const toCheck = (d) => ({ behind: d.behind, commits: d.commits || [], dirtyFiles: d.dirtyFiles || 0, logTail: d.logTail || "", error: d.error || null });
+    const applyState = (d) => { if (alive && d && typeof d.state === "string") setForkState(d.state); };
+    fetch("/api/upstream")
+      .then((r) => r.json())
+      .then((d) => { if (alive) setForkCheck(toCheck(d)); applyState(d); })
+      .catch(() => { if (alive) setForkCheck({ behind: null, error: "cek gagal" }); });
+    const timer = setInterval(() => {
+      fetch("/api/upstream?mode=state").then((r) => r.json()).then(applyState).catch(() => {});
+    }, 4000);
+    return () => { alive = false; clearInterval(timer); };
   }, []);
 
   const isActive = (href) => {
@@ -64,52 +96,45 @@ export default function Sidebar({ onClose }) {
     return pathname.startsWith(href);
   };
 
-  // Open manual update panel (no countdown yet — user must click Copy to trigger shutdown)
-  const handleUpdate = () => {
-    setShowUpdateModal(false);
-    setIsUpdating(true);
-  };
-
-  // Triggered by Copy button inside ManualUpdatePanel: copy + countdown + shutdown
-  const handleCopyAndShutdown = async () => {
-    try { await navigator.clipboard.writeText(INSTALL_CMD); } catch { /* clipboard blocked */ }
-    copy(INSTALL_CMD);
-    let remaining = UPDATER_CONFIG.shutdownCountdownSec;
-    setShutdownCountdown(remaining);
-    const timer = setInterval(() => {
-      remaining -= 1;
-      setShutdownCountdown(remaining);
-      if (remaining <= 0) {
-        clearInterval(timer);
-        fetch("/api/version/shutdown", { method: "POST" }).catch(() => {});
-        setIsDisconnected(true);
+  // Jalankan update fork dari web: POST -> systemd-run terpisah (aman dari restart app)
+  const handleForkApply = async () => {
+    setForkApplying(true);
+    try {
+      const r = await fetch("/api/upstream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "apply" }),
+      });
+      const d = await r.json();
+      if (!r.ok) {
+        setForkCheck((prev) => ({ ...(prev || {}), error: d.error || "gagal memulai update" }));
+        setForkApplying(false);
+        return;
       }
-    }, 1000);
+      setForkState(d.state || "queued");
+    } catch {
+      setForkCheck((prev) => ({ ...(prev || {}), error: "jaringan/server error" }));
+      setForkApplying(false);
+    }
   };
-
-  const handleCancelUpdate = () => {
-    setIsUpdating(false);
-    setShutdownCountdown(0);
-  };
-
-  // Note: legacy updater poll removed. New flow: copy install cmd + shutdown server,
-  // user runs the command manually in another terminal.
 
 
   return (
     <>
       <aside className="flex w-72 flex-col border-r border-border-subtle bg-vibrancy backdrop-blur-xl transition-colors duration-300 min-h-full">
-        {/* Traffic lights */}
+        {/* Gateway live chip (ronde-26) */}
         <div className="flex items-center gap-2 px-6 pt-5 pb-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-          <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-          <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+          <span className="relative flex size-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+            <span className="relative inline-flex size-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.8)]" />
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300/90">Gateway Live</span>
         </div>
 
         {/* Logo */}
         <div className="px-6 py-4 flex flex-col gap-2">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-9 rounded-[10px] bg-gradient-to-br from-brand-500 to-brand-700 shadow-[var(--shadow-warm)]">
+            <div className="flex items-center justify-center size-9 rounded-[10px] bg-gradient-to-br from-brand-400 to-brand-700 ring-1 ring-white/15 shadow-[0_0_18px_-4px_rgba(200,191,255,.55),var(--shadow-warm)]">
               <span className="material-symbols-outlined text-white text-[20px]">hub</span>
             </div>
             <div className="flex flex-col">
@@ -119,28 +144,31 @@ export default function Sidebar({ onClose }) {
               <span className="text-xs text-text-muted">v{APP_CONFIG.version}</span>
             </div>
           </Link>
-          {updateInfo && (
-            <div className="flex flex-col gap-1.5 rounded p-1 -m-1">
-              <span className="text-xs font-semibold text-green-600 dark:text-amber-500">
-                ↑ New version available: v{updateInfo.latestVersion}
+          {forkBusy && (
+            <div className="flex items-center gap-2 rounded-lg border border-primary/25 bg-primary/10 px-2.5 py-2 text-xs text-primary" role="status" aria-live="polite" title={forkState || ""}>
+              <span className="relative flex size-2 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-70" />
+                <span className="relative inline-flex size-2 rounded-full bg-primary" />
               </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowUpdateModal(true)}
-                  className="px-2 py-1 rounded bg-green-600 hover:bg-green-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-[11px] font-semibold transition-colors cursor-pointer"
-                >
-                  Update now
-                </button>
-                <button
-                  onClick={() => copy(INSTALL_CMD)}
-                  title="Copy install command"
-                  className="flex-1 text-left hover:opacity-80 transition-opacity cursor-pointer min-w-0"
-                >
-                  <code className="block text-[10px] text-green-600/80 dark:text-amber-400/70 font-mono truncate">
-                    {copied ? "✓ copied!" : INSTALL_CMD}
-                  </code>
-                </button>
-              </div>
+              <span className="min-w-0 flex-1 truncate">{forkState || "Mengupdate fork…"}</span>
+            </div>
+          )}
+          {!forkBusy && forkCheck && forkCheck.error && (
+            <button onClick={() => setShowForkModal(true)} className="w-full cursor-pointer rounded-lg border border-danger/30 bg-danger/10 px-2.5 py-1.5 text-left text-[11px] text-danger transition hover:bg-danger/15">
+              Cek update gagal — klik utk detail
+            </button>
+          )}
+          {!forkBusy && forkCheck && forkCheck.behind > 0 && (
+            <button onClick={() => setShowForkModal(true)} title="Commit upstream baru tersedia — update langsung dari web" className="flex w-full cursor-pointer items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1.5 text-left text-[11px] font-semibold text-amber-300 transition hover:bg-amber-400/15">
+              <span className="material-symbols-outlined text-[13px]">system_update_alt</span>
+              <span className="flex-1">{forkCheck.behind} commit upstream</span>
+              <span className="underline">Update</span>
+            </button>
+          )}
+          {!forkBusy && forkCheck && !forkCheck.error && forkCheck.behind === 0 && (
+            <div className="flex items-center gap-1.5 px-1 text-[11px] text-text-subtle">
+              <span className="material-symbols-outlined text-[13px] text-success">check_circle</span>
+              <span>fork up-to-date</span>
             </div>
           )}
         </div>
@@ -148,110 +176,29 @@ export default function Sidebar({ onClose }) {
         {/* Navigation */}
         <nav className="flex-1 px-4 py-2 space-y-0.5 overflow-y-auto custom-scrollbar">
           {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                isActive(item.href)
-                  ? "bg-primary/10 text-primary"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span
-                className={cn(
-                  "material-symbols-outlined text-[18px]",
-                  isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                )}
-              >
-                {item.icon}
-              </span>
-              <span className="text-[13px] font-medium">{item.label}</span>
-            </Link>
+            <NavItem key={item.href} {...item} active={isActive(item.href)} onClose={onClose} />
           ))}
 
           {/* System section */}
           <div className="pt-3 mt-2 space-y-0.5">
-            <p className="px-4 text-xs font-semibold text-text-muted/60 uppercase tracking-wider mb-2">
+            <p className="px-4 text-[10px] font-bold text-text-subtle uppercase tracking-[0.18em] mb-2">
               System
             </p>
 
             {systemItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                  isActive(item.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                )}
-              >
-                <span
-                  className={cn(
-                    "material-symbols-outlined text-[18px]",
-                    isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                  )}
-                >
-                  {item.icon}
-                </span>
-                <span className="text-[13px] font-medium">{item.label}</span>
-              </Link>
+              <NavItem key={item.href} {...item} active={isActive(item.href)} onClose={onClose} />
             ))}
 
             {/* Debug items (inside System section, before Settings) */}
             {debugItems.map((item) => {
               const show = item.href !== "/dashboard/translator" || enableTranslator;
-              return show ? (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                    isActive(item.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "material-symbols-outlined text-[18px]",
-                      isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                    )}
-                  >
-                    {item.icon}
-                  </span>
-                  <span className="text-[13px] font-medium">{item.label}</span>
-                </Link>
-              ) : null;
+              return show ? <NavItem key={item.href} {...item} active={isActive(item.href)} onClose={onClose} /> : null;
             })}
 
             
             
             {/* Settings */}
-            <Link
-              href="/dashboard/profile"
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-1 rounded-lg transition-all group",
-                isActive("/dashboard/profile")
-                  ? "bg-primary/10 text-primary"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span
-                className={cn(
-                  "material-symbols-outlined text-[18px]",
-                  isActive("/dashboard/profile") ? "fill-1" : "group-hover:text-primary transition-colors"
-                )}
-              >
-                settings
-              </span>
-              <span className="text-[13px] font-medium">Settings</span>
-            </Link>
+            <NavItem href="/dashboard/profile" label="Settings" icon="settings" active={isActive("/dashboard/profile")} onClose={onClose} />
           </div>
         </nav>
 
@@ -259,108 +206,74 @@ export default function Sidebar({ onClose }) {
 
       {/* Remote Promo Modal */}
 
-      {/* Update Confirmation Modal */}
-      <ConfirmModal
-        isOpen={showUpdateModal}
-        onClose={() => setShowUpdateModal(false)}
-        onConfirm={handleUpdate}
-        title="Update MeAI"
-        message={`Show install command for v${updateInfo?.latestVersion || ""}? You can copy it and shutdown to install manually.`}
-        confirmText="Show Command"
-        cancelText="Cancel"
-        variant="primary"
-      />
-
-      {/* Disconnected / Updating Overlay */}
-      {(isDisconnected || isUpdating) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6">
-          {isUpdating ? (
-            <ManualUpdatePanel
-              latestVersion={updateInfo?.latestVersion}
-              installCmd={INSTALL_CMD}
-              copied={copied}
-              onCopyAndShutdown={handleCopyAndShutdown}
-              onCancel={handleCancelUpdate}
-              countdown={shutdownCountdown}
-              isDisconnected={isDisconnected}
-            />
-          ) : (
-            <div className="text-center p-8">
-              <div className="flex items-center justify-center size-16 rounded-full bg-red-500/20 text-red-500 mx-auto mb-4">
-                <span className="material-symbols-outlined text-[32px]">power_off</span>
-              </div>
-              <h2 className="text-xl font-semibold text-white mb-2">Server Disconnected</h2>
-              <p className="text-text-muted mb-6">The proxy server has been stopped.</p>
-              <Button variant="secondary" onClick={() => globalThis.location.reload()}>
-                Reload Page
+      {/* Fork Update Modal — cek + update dari web (ronde-26) */}
+      <Modal
+        isOpen={showForkModal}
+        onClose={() => setShowForkModal(false)}
+        title={forkBusy ? "Mengupdate Fork…" : "Update Fork MeAI dari Web"}
+        size="md"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowForkModal(false)} disabled={forkBusy}>
+              {forkBusy ? "Proses berjalan di latar belakang" : "Tutup"}
+            </Button>
+            {typeof forkState === "string" && /^done/.test(forkState) ? (
+              <Button variant="primary" onClick={() => globalThis.location.reload()}>Muat ulang</Button>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={handleForkApply}
+                loading={forkApplying || forkBusy}
+                disabled={forkBusy || !forkCheck || forkCheck.behind === null || forkCheck.behind === 0}
+              >
+                {forkBusy ? "Berjalan…" : "Update & Build"}
               </Button>
+            )}
+          </>
+        }
+      >
+        <div className="space-y-3 text-sm">
+          {forkCheck && forkCheck.error && <p className="text-danger text-xs">{forkCheck.error}</p>}
+          {forkBusy && (
+            <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-xs text-primary" aria-live="polite">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-70" />
+                <span className="relative inline-flex size-2 rounded-full bg-primary" />
+              </span>
+              <span className="min-w-0 flex-1 truncate">{forkState}</span>
             </div>
           )}
+          {forkCheck && forkCheck.behind > 0 && (
+            <>
+              <p className="text-xs text-text-muted">
+                {forkCheck.behind} commit upstream baru — hanya yang aman (tak menyentuh file fork) yang di-cherry-pick, lalu build & restart otomatis.
+              </p>
+              <ol className="max-h-56 space-y-1 overflow-y-auto custom-scrollbar">
+                {(forkCheck.commits || []).map((c) => (
+                  <li key={c.sha} className="flex items-center gap-2 rounded-lg bg-surface-2/70 px-2 py-1 text-xs">
+                    <code className="shrink-0 text-primary">{c.sha}</code>
+                    <span className="shrink-0 text-text-subtle">{c.date}</span>
+                    <span className="min-w-0 flex-1 truncate" title={c.msg}>{c.msg}</span>
+                  </li>
+                ))}
+              </ol>
+              {forkCheck.dirtyFiles > 0 && (
+                <p className="text-xs text-warning">{forkCheck.dirtyFiles} file lokal belum di-commit — tetap dilindungi (update aman tak menyentuhnya).</p>
+              )}
+            </>
+          )}
+          {forkCheck && forkCheck.behind === 0 && !forkCheck.error && (
+            <p className="text-xs text-success">Fork sudah up-to-date dengan upstream. Tidak ada yang perlu di-update.</p>
+          )}
+          {forkCheck && forkCheck.logTail && (
+            <pre className="max-h-28 overflow-auto custom-scrollbar rounded-lg bg-black/30 p-2 text-[10px] text-text-subtle">{forkCheck.logTail}</pre>
+          )}
         </div>
-      )}
+      </Modal>
     </>
   );
 }
 
 Sidebar.propTypes = {
   onClose: PropTypes.func,
-};
-
-function ManualUpdatePanel({ latestVersion, installCmd, copied, onCopyAndShutdown, onCancel, countdown, isDisconnected }) {
-  const isCountingDown = countdown > 0;
-  return (
-    <div className="w-full max-w-lg rounded-xl bg-neutral-900/95 border border-white/10 p-6 text-white">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex items-center justify-center size-11 rounded-full bg-amber-500/20 text-amber-400">
-          <span className="material-symbols-outlined text-[24px]">content_copy</span>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold">Update MeAI{latestVersion ? ` to v${latestVersion}` : ""}</h2>
-          <p className="text-xs text-white/60">
-            {isDisconnected
-              ? "Server stopped. Paste the command into a terminal to install."
-              : isCountingDown
-                ? `Command copied. Server will stop in ${countdown}s...`
-                : "Click the button below to copy the install command and shutdown."}
-          </p>
-        </div>
-      </div>
-
-      <p className="text-sm text-white/80 mb-2">Install command:</p>
-      <div className="w-full px-3 py-2 rounded bg-white/5 mb-4">
-        <code className="text-xs font-mono text-amber-400 break-all">{installCmd}</code>
-      </div>
-
-      <ol className="text-xs text-white/70 space-y-1 list-decimal list-inside mb-4">
-        <li>Click <strong>Copy & Shutdown</strong> below.</li>
-        <li>Paste the command into your terminal and press Enter.</li>
-        <li>Run <code className="px-1 rounded bg-white/10 text-green-400">meai</code> again after install.</li>
-      </ol>
-
-      {isDisconnected ? (
-        <Button variant="secondary" fullWidth onClick={() => globalThis.location.reload()}>
-          Reload Page
-        </Button>
-      ) : (
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={onCancel} disabled={isCountingDown}>
-            Cancel
-          </Button>
-          <Button variant="primary" fullWidth onClick={onCopyAndShutdown} disabled={isCountingDown}>
-            {copied ? "✓ Copied — shutting down..." : isCountingDown ? `Shutting down in ${countdown}s` : "Copy & Shutdown"}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-ManualUpdatePanel.propTypes = {
-  latestVersion: PropTypes.string,
-  installCmd: PropTypes.string.isRequired,
-  copied: PropTypes.bool,
-  onCopyAndShutdown: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  countdown: PropTypes.number,
-  isDisconnected: PropTypes.bool,
 };

@@ -20,6 +20,7 @@ const ProviderTopology = dynamic(() => import("@/app/(dashboard)/dashboard/usage
 import UsageChart from "@/app/(dashboard)/dashboard/usage/components/UsageChart";
 import ProviderBarChart from "@/app/(dashboard)/dashboard/usage/components/ProviderBarChart";
 import TopModelsChart from "@/app/(dashboard)/dashboard/usage/components/TopModelsChart";
+import UsageDonuts from "@/app/(dashboard)/dashboard/usage/components/UsageDonuts";
 
 function timeAgo(timestamp) {
   const diff = Math.floor((Date.now() - new Date(timestamp)) / 1000);
@@ -488,7 +489,8 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
 
       {/* Provider and model breakdown charts */}
       {!loading && (stats.byProvider || stats.byModel) && (
-        <div className="grid min-w-0 grid-cols-1 gap-2 lg:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-2 lg:grid-cols-3">
+          <UsageDonuts stats={stats} />
           <ProviderBarChart byProvider={stats.byProvider} />
           <TopModelsChart byModel={stats.byModel} />
         </div>

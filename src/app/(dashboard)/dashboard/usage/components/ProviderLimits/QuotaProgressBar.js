@@ -109,7 +109,7 @@ export default function QuotaProgressBar({
       )}
 
       {/* Usage details and countdown */}
-      <div className="flex items-center justify-between text-xs text-text-muted">
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-xs text-text-muted">
         <span>
           {used.toLocaleString()} / {total.toLocaleString()} requests
         </span>
