@@ -72,7 +72,10 @@ export default function ProviderBarChart({ byProvider }) {
               tickLine={false}
               axisLine={false}
               interval={0}
-              tickFormatter={(v) => v.length > 10 ? v.slice(0, 10) + "…" : v}
+              angle={-30}
+              textAnchor="end"
+              height={48}
+              tickFormatter={(v) => v.length > 13 ? v.slice(0, 13) + "…" : v}
             />
             <YAxis
               tick={{ fontSize: 10, fill: "currentColor", fillOpacity: 0.5 }}
