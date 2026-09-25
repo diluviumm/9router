@@ -1069,7 +1069,7 @@ export default function ProviderLimits() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 items-start md:grid-cols-2 gap-3">
         {sortedConnections.map((conn) => {
           const quota = quotaData[conn.id];
           const isLoading = loading[conn.id];
@@ -1338,7 +1338,7 @@ export default function ProviderLimits() {
                       visibility_off
                     </span>
                     <span className="shrink-0">Hidden:</span>
-                    <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto whitespace-nowrap pb-2">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 pb-1">
                       {hiddenQuotaRows.map((quotaRow) => (
                         <button
                           key={getQuotaVisibilityKey(quotaRow)}
@@ -1385,40 +1385,42 @@ export default function ProviderLimits() {
                 ))}
                 <option value="custom">Custom</option>
               </select>
-              <input
-                type="number"
-                min="1"
-                max={String(ACCOUNT_PAGE_SIZE_MAX)}
-                inputMode="numeric"
-                value={customPageSizeInput}
-                onChange={(event) => setCustomPageSizeInput(event.target.value)}
-                onBlur={() => {
-                  const parsedValue = Number.parseInt(customPageSizeInput, 10);
-                  if (!Number.isFinite(parsedValue)) {
-                    setCustomPageSizeInput(String(pageSize));
-                    return;
-                  }
-                  const nextPageSize = Math.min(ACCOUNT_PAGE_SIZE_MAX, Math.max(1, parsedValue));
-                  setPage(1);
-                  setPageSize(nextPageSize);
-                  setCustomPageSizeInput(String(nextPageSize));
-                }}
-                onKeyDown={(event) => {
-                  if (event.key !== "Enter") return;
-                  const parsedValue = Number.parseInt(customPageSizeInput, 10);
-                  if (!Number.isFinite(parsedValue)) {
-                    setCustomPageSizeInput(String(pageSize));
-                    return;
-                  }
-                  const nextPageSize = Math.min(ACCOUNT_PAGE_SIZE_MAX, Math.max(1, parsedValue));
-                  setPage(1);
-                  setPageSize(nextPageSize);
-                  setCustomPageSizeInput(String(nextPageSize));
-                }}
-                className="h-8 w-20 rounded-lg border border-black/10 bg-black/[0.02] px-2 text-xs text-text-primary outline-none transition-colors hover:bg-black/5 dark:border-white/10 dark:bg-white/[0.03] dark:hover:bg-white/10"
-                aria-label="Custom accounts per page"
-                placeholder="Custom"
-              />
+              {isCustomPageSize && (
+                <input
+                  type="number"
+                  min="1"
+                  max={String(ACCOUNT_PAGE_SIZE_MAX)}
+                  inputMode="numeric"
+                  value={customPageSizeInput}
+                  onChange={(event) => setCustomPageSizeInput(event.target.value)}
+                  onBlur={() => {
+                    const parsedValue = Number.parseInt(customPageSizeInput, 10);
+                    if (!Number.isFinite(parsedValue)) {
+                      setCustomPageSizeInput(String(pageSize));
+                      return;
+                    }
+                    const nextPageSize = Math.min(ACCOUNT_PAGE_SIZE_MAX, Math.max(1, parsedValue));
+                    setPage(1);
+                    setPageSize(nextPageSize);
+                    setCustomPageSizeInput(String(nextPageSize));
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter") return;
+                    const parsedValue = Number.parseInt(customPageSizeInput, 10);
+                    if (!Number.isFinite(parsedValue)) {
+                      setCustomPageSizeInput(String(pageSize));
+                      return;
+                    }
+                    const nextPageSize = Math.min(ACCOUNT_PAGE_SIZE_MAX, Math.max(1, parsedValue));
+                    setPage(1);
+                    setPageSize(nextPageSize);
+                    setCustomPageSizeInput(String(nextPageSize));
+                  }}
+                  className="h-8 w-20 rounded-lg border border-black/10 bg-black/[0.02] px-2 text-xs text-text-primary outline-none transition-colors hover:bg-black/5 dark:border-white/10 dark:bg-white/[0.03] dark:hover:bg-white/10"
+                  aria-label="Custom accounts per page"
+                  placeholder="Custom"
+                />
+              )}
               <span className="text-xs text-text-muted">Page {pagination.page} / {pagination.totalPages}</span>
             </div>
             <div className="flex items-center gap-1.5">

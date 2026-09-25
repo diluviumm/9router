@@ -412,7 +412,7 @@ export default function ProviderTopology({ providers = [], activeRequests = [], 
 
   const rfInstance = useRef(null);
   const containerRef = useRef(null);
-  const fitOpts = { padding: 0.2, duration: 200 };
+  const fitOpts = { padding: 0.15, duration: 200, maxZoom: 1.6 };  // maxZoom>1: cluster kecil boleh zoom-in
   const onInit = useCallback((instance) => {
     rfInstance.current = instance;
     setTimeout(() => instance.fitView(fitOpts), 50);
@@ -438,7 +438,7 @@ export default function ProviderTopology({ providers = [], activeRequests = [], 
   }, [nodes.length]);
 
   return (
-    <div ref={containerRef} className="h-[320px] w-full min-w-0 rounded-lg border border-border bg-bg-subtle/30 sm:h-[480px]">
+    <div ref={containerRef} className="h-[280px] w-full min-w-0 rounded-lg border border-border bg-bg-subtle/30 sm:h-[380px]">
       {providers.length === 0 ? (
         <div className="h-full flex items-center justify-center text-text-muted text-sm">
           No providers connected

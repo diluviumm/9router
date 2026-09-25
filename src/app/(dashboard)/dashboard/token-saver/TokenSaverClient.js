@@ -629,7 +629,7 @@ export default function TokenSaverClient() {
                 {installLog}
               </pre>
             )}
-            <p className="text-xs text-text-muted mt-1">
+            <p className="mt-1 max-w-[65ch] text-xs leading-relaxed text-text-muted">
               Installing adds the package; use <code>on</code>/<code>off</code>{" "}
               to activate it (restarts the proxy). Default install is{" "}
               <code>[proxy]</code> only (SmartCrusher for JSON). Adding{" "}

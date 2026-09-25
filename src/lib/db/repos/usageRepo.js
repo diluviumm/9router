@@ -425,11 +425,11 @@ export async function getUsageStats(period = "all") {
   const bucketMap = {};
   for (let i = 0; i < 10; i++) {
     const ts = currentMinuteStart.getTime() - (9 - i) * 60 * 1000;
-    bucketMap[ts] = { requests: 0, promptTokens: 0, completionTokens: 0, cost: 0 };
+    bucketMap[ts] = { requests: 0, promptTokens: 0, completionTokens: 0, cachedTokens: 0, cost: 0 };
     stats.last10Minutes.push(bucketMap[ts]);
   }
   const recent10 = db.all(
-    `SELECT timestamp, promptTokens, completionTokens, cost FROM usageHistory WHERE timestamp >= ? AND timestamp <= ?`,
+    `SELECT timestamp, promptTokens, completionTokens, cost, tokens FROM usageHistory WHERE timestamp >= ? AND timestamp <= ?`,
     [tenMinutesAgo.toISOString(), now.toISOString()]
   );
   for (const r of recent10) {
@@ -440,6 +440,8 @@ export async function getUsageStats(period = "all") {
       bucketMap[minuteStart].promptTokens += r.promptTokens || 0;
       bucketMap[minuteStart].completionTokens += r.completionTokens || 0;
       bucketMap[minuteStart].cost += r.cost || 0;
+      const tj = parseJson(r.tokens, {}) || {};
+      bucketMap[minuteStart].cachedTokens += tj.cached_tokens || tj.cache_read_input_tokens || 0;
     }
   }
 
