@@ -24,10 +24,11 @@ export default function Card({
 
   return (
     <div
+      data-tilt={hover ? "" : undefined}
       className={cn(
-        "bg-surface border border-border-subtle",
+        "bg-surface border border-border-subtle glass-card",
         elev ? "rounded-[14px] shadow-[var(--shadow-elev)]" : "rounded-[14px] shadow-[var(--shadow-soft)]",
-        hover && "hover:shadow-[var(--shadow-warm)] hover:border-brand-500/30 transition-all cursor-pointer",
+        hover && "tilt-3d hover:shadow-[var(--shadow-warm)] hover:border-brand-500/30 transition-[box-shadow,border-color,transform] cursor-pointer",
         paddings[padding],
         className
       )}

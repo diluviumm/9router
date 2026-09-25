@@ -12,21 +12,21 @@
    Brand orange (dark) / soft coral (light), neutral warm bases
    ============================================================ */
 :root {
-  /* Brand scale (light) - centered on #E56A4A */
-  --color-brand-50: #fdf1ed;
-  --color-brand-100: #fadccf;
-  --color-brand-200: #f4b59c;
-  --color-brand-300: #ee8d6a;
-  --color-brand-400: #ea7855;
-  --color-brand-500: #E56A4A;
-  --color-brand-600: #cc5236;
-  --color-brand-700: #a64027;
-  --color-brand-800: #7a2f1d;
-  --color-brand-900: #4d1e12;
+  /* Brand scale (lavender - Noctalia palette) light */
+  --color-brand-50: #f6f4ff;
+  --color-brand-100: #ede9ff;
+  --color-brand-200: #ddd7ff;
+  --color-brand-300: #cec5ff;
+  --color-brand-400: #b9aefc;
+  --color-brand-500: #a497f6;
+  --color-brand-600: #8b7ce8;
+  --color-brand-700: #7464d4;
+  --color-brand-800: #5d4fb0;
+  --color-brand-900: #473f77;
 
-  /* Primary (legacy alias for backward compat with existing components) */
-  --color-primary: var(--color-brand-500);
-  --color-primary-hover: var(--color-brand-600);
+  /* Primary - deep lavender (white text kontras di light) */
+  --color-primary: #5d4fb0;
+  --color-primary-hover: #7464d4;
 
   /* Surfaces & backgrounds (light) */
   --color-bg: #FDFAF6;
@@ -70,50 +70,50 @@
 }
 
 .dark {
-  /* Brand scale (dark) - centered on #E56A4A, same as light for consistency */
-  --color-brand-50: #fdf1ed;
-  --color-brand-100: #fadccf;
-  --color-brand-200: #f4b59c;
-  --color-brand-300: #ee8d6a;
-  --color-brand-400: #ea7855;
-  --color-brand-500: #E56A4A;
-  --color-brand-600: #cc5236;
-  --color-brand-700: #a64027;
-  --color-brand-800: #7a2f1d;
-  --color-brand-900: #4d1e12;
+  /* Brand scale (dark) - Noctalia palette, accent #c8bfff */
+  --color-brand-50: #f6f4ff;
+  --color-brand-100: #ede9ff;
+  --color-brand-200: #ddd7ff;
+  --color-brand-300: #cec5ff;
+  --color-brand-400: #c8bfff;
+  --color-brand-500: #b9aefc;
+  --color-brand-600: #a497f6;
+  --color-brand-700: #8b7ce8;
+  --color-brand-800: #7464d4;
+  --color-brand-900: #473f77;
 
-  --color-primary: #E56A4A;
-  --color-primary-hover: #cc5236;
+  --color-primary: #c8bfff;
+  --color-primary-hover: #dcd4ff;
 
-  /* Surfaces (dark - Claude-like neutral warm) */
-  --color-bg: #1a1a1a;
-  --color-bg-alt: #1F1F1E;
-  --color-surface: #262626;
-  --color-surface-2: #303030;
-  --color-surface-3: #3a3a3a;
-  --color-sidebar: rgba(30, 30, 30, 0.85);
+  /* Surfaces (Noctalia dark) */
+  --color-bg: #141318;
+  --color-bg-alt: #17161c;
+  --color-surface: #201f25;
+  --color-surface-2: #2b292f;
+  --color-surface-3: #36343c;
+  --color-sidebar: rgba(26, 25, 31, 0.88);
 
-  --color-border: #333333;
-  --color-border-subtle: #2a2a2a;
+  --color-border: #3d3a47;
+  --color-border-subtle: #2b292f;
 
-  --color-text: #ededed;
-  --color-text-main: #ededed;
-  --color-text-muted: #9ca3af;
-  --color-text-subtle: #6b7280;
+  --color-text: #e5e1e9;
+  --color-text-main: #e5e1e9;
+  --color-text-muted: #c9c5d0;
+  --color-text-subtle: #928f99;
 
-  --color-danger: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #fbbf24;
-  --color-info: #60a5fa;
+  --color-danger: #ffb4ab;
+  --color-success: #a3d6a8;
+  --color-warning: #eec57f;
+  --color-info: #9cb4e8;
 
-  --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.3);
-  --shadow-warm: 0 2px 12px -2px rgba(229, 106, 74, 0.25);
-  --shadow-elevated: 0 12px 28px -4px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.4);
+  --shadow-warm: 0 2px 14px -2px rgba(200, 191, 255, 0.22);
+  --shadow-elevated: 0 12px 32px -6px rgba(0, 0, 0, 0.5);
   --shadow-elev:
-    inset 0 1px 0 0 rgba(255,255,255,0.06),
-    0 1px 2px rgba(0,0,0,0.4),
-    0 16px 48px -8px rgba(0,0,0,0.55);
-  --shadow-focus: 0 0 0 3px rgba(229, 106, 74, 0.18);
+    inset 0 1px 0 0 rgba(255,255,255,0.05),
+    0 1px 2px rgba(0,0,0,0.45),
+    0 16px 48px -8px rgba(200, 191, 255, 0.10);
+  --shadow-focus: 0 0 0 3px rgba(200, 191, 255, 0.30);
 
   color-scheme: dark;
 }
@@ -601,4 +601,56 @@ button:disabled,
   border: none;
   border-top: 1px solid var(--color-border);
   margin: 1.5rem 0;
+}
+
+/* ============================================================
+   Noctalia futuristic layer (ronde kilau-futuristik)
+   ============================================================ */
+/* Kontras: solid lavender bg → teks gelap (menang atas text-white dgn specificity) */
+.dark .bg-primary:not([class*="bg-primary/"]) {
+  color: #30285f;
+}
+/* Ambient radial statis (0 anim cost, GPU paint sekali) */
+.dark body {
+  background-color: #141318;
+  background-image:
+    radial-gradient(1100px 640px at 14% -12%, rgba(200, 191, 255, 0.075), transparent 62%),
+    radial-gradient(880px 520px at 96% 108%, rgba(163, 214, 168, 0.05), transparent 58%);
+  background-attachment: fixed;
+}
+/* Glass card layer (dipakai Card component) */
+.glass-card {
+  background: linear-gradient(160deg, rgba(43, 41, 47, 0.78), rgba(32, 31, 37, 0.94));
+  border: 1px solid rgba(200, 191, 255, 0.14);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.glass-card:hover {
+  border-color: rgba(200, 191, 255, 0.34);
+  box-shadow: 0 10px 34px -10px rgba(200, 191, 255, 0.28);
+  transform: translateY(-2px);
+}
+/* 3D tilt layer (JS data-tilt, rAF-throttled; transform-only = GPU) */
+.tilt-3d {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.tilt-3d.is-tilting {
+  transition: transform 0.12s ease-out, box-shadow 0.18s ease;
+}
+/* Smooth di semua device: hanya transform/opacity (GPU) */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-card, .tilt-3d, .reveal-up { transition: none !important; transform: none !important; }
+}
+/* Mobile: matikan hover-lift & tilt (sentuh) — cegah sticky hover */
+@media (hover: none) {
+  .glass-card:hover { transform: none; box-shadow: none; }
 }

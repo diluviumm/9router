@@ -25,7 +25,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#141318",
 };
 
 export default function RootLayout({ children }) {
@@ -43,6 +43,11 @@ export default function RootLayout({ children }) {
         <script
           dangerouslySetInnerHTML={{
             __html: `var d=document,r=d.documentElement,f=function(){r.classList.add('fonts-loaded')};if(d.fonts&&d.fonts.load){d.fonts.load('24px "Material Symbols Outlined"').then(f).catch(f);setTimeout(f,3000)}else{f()}`,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){if(!window.matchMedia||!matchMedia('(hover:hover) and (pointer:fine)').matches)return;var cur=null,raf=0,ev=null;function apply(){raf=0;if(!cur)return;var r=cur.getBoundingClientRect();var px=((ev.clientX-r.left)/r.width)-0.5,py=((ev.clientY-r.top)/r.height)-0.5;cur.classList.add('is-tilting');cur.style.transform='perspective(900px) rotateX('+(-py*3.5).toFixed(2)+'deg) rotateY('+(px*3.5).toFixed(2)+'deg)';}addEventListener('pointermove',function(e){var el=e.target&&e.target.closest?e.target.closest('[data-tilt]'):null;if(el!==cur){if(cur){cur.style.transform='';cur.classList.remove('is-tilting');}cur=el;}if(!cur||raf)return;ev=e;raf=requestAnimationFrame(apply);},{passive:true});addEventListener('pointerdown',function(){if(cur){cur.style.transform='';cur.classList.remove('is-tilting');cur=null;}});})();`,
           }}
         />
       </head>
