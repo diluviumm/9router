@@ -32,7 +32,11 @@ Akses publik dilindungi **Cloudflare Access** (tidak ada login ganda di aplikasi
 ### Proxy & Routing
 - **Endpoint OpenAI-compatible**: `POST /v1/chat/completions` (base URL `http://127.0.0.1:20128/v1`).
 - **Endpoint Anthropic-compatible**: `ANTHROPIC_BASE_URL=http://127.0.0.1:20128` untuk klien Claude-Code-style.
-- **373 provider** dengan metadata (website, URL API key, model list, penanda free-tier).
+- **373 provider** dengan metadata (website, URL API key, model list, penanda free-tier
+
+### Free-tier & ranking provider
+Katalog **free-tier** (pools, kuota, hitungan token/bulan) dan **ranking provider** diadaptasi dari OmniRoute ke [`docs/FREE_TIERS.md`](docs/FREE_TIERS.md) — 489 entri free-tier di 35 pool berulang, ringkasan headline ~1.62B token/bulan (angka sumber OmniRoute, diaudit upstream tiap 2 minggu). Fork menyediakan **penanda free-tier per provider** (373 provider di katalog).
+).
 - **Combos**: gabungan beberapa provider/satu provider multi-model dengan fallback lintas-provider — combo `mael-mimo` memuat `opencode-go:mimo-v2.6-{flash,pro,ultraspeed}` + `xiaomi-mimo:mimo-v2.6-{flash,pro,pro-ultraspeed}`.
 - **Alias model**: `mimo` → xiaomi-mimo v2.6-flash, `mimo-pro` → mimo-v2.6-pro, `mimo-ultra` → mimo-v2.6-pro-ultraspeed.
 - **Quota Tracker** & **Usage** (grafik 24 jam, rincian per provider/hari, ekspor JSON).

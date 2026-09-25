@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   getProviderConnections,
   createProviderConnection,
+  updateProviderConnection,
   getProviderNodeById,
   getProviderNodes,
   getProxyPoolById,
@@ -193,5 +194,32 @@ export async function POST(request) {
   } catch (error) {
     console.log("Error creating provider:", error);
     return NextResponse.json({ error: "Failed to create provider" }, { status: 500 });
+  }
+}
+
+// PATCH /api/providers - Bulk action: { action: "enable"|"disable", ids: [...] }
+export async function PATCH(request) {
+  try {
+    const { action, ids } = await request.json();
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: "ids[] wajib diisi" }, { status: 400 });
+    }
+    if (action !== "enable" && action !== "disable") {
+      return NextResponse.json({ error: "action harus enable|disable" }, { status: 400 });
+    }
+    const isActive = action === "enable";
+    let updated = 0;
+    let notFound = 0;
+    for (const id of ids) {
+      try {
+        const r = await updateProviderConnection(String(id), { isActive });
+        if (r) updated += 1;
+        else notFound += 1;
+      } catch { notFound += 1; }
+    }
+    return NextResponse.json({ ok: true, action, updated, notFound, total: ids.length });
+  } catch (error) {
+    console.log("Error bulk providers:", error);
+    return NextResponse.json({ error: "Bulk update failed" }, { status: 500 });
   }
 }

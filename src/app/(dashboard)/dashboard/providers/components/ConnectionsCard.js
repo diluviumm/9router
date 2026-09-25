@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { getStatusVariant as getConnectionStatusVariant } from "@/shared/utils/connectionStatus";
 import PropTypes from "prop-types";
 import { Card, Badge, Button, Modal, Select, Toggle, EditConnectionModal, ConfirmModal } from "@/shared/components";
+import OnboardingWizard from "@/shared/components/OnboardingWizard";
 
 // ── CooldownTimer ──────────────────────────────────────────────
 function CooldownTimer({ until }) {
@@ -30,7 +31,7 @@ function CooldownTimer({ until }) {
 CooldownTimer.propTypes = { until: PropTypes.string.isRequired };
 
 // ── ConnectionRow ──────────────────────────────────────────────
-function ConnectionRow({ connection, proxyPools, isOAuth, isFirst, isLast, onMoveUp, onMoveDown, onToggleActive, onUpdateProxy, onEdit, onDelete }) {
+function ConnectionRow({ connection, proxyPools, isOAuth, isFirst, isLast, selected, onSelect, onMoveUp, onMoveDown, onToggleActive, onUpdateProxy, onEdit, onDelete }) {
   const [showProxyDropdown, setShowProxyDropdown] = useState(false);
   const [updatingProxy, setUpdatingProxy] = useState(false);
   const [isCooldown, setIsCooldown] = useState(false);
@@ -102,6 +103,7 @@ function ConnectionRow({ connection, proxyPools, isOAuth, isFirst, isLast, onMov
   return (
     <div className={`group flex flex-col gap-3 p-2 rounded-lg sm:flex-row sm:items-center sm:justify-between hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors ${connection.isActive === false ? "opacity-60" : ""}`}>
       <div className="flex w-full min-w-0 flex-1 items-start gap-3 sm:items-center">
+        <input type="checkbox" checked={!!selected} onChange={onSelect} onClick={(e) => e.stopPropagation()} className="mr-1 h-4 w-4 shrink-0 cursor-pointer accent-[#3fb950]" aria-label="Pilih koneksi" />
         <div className="flex flex-col">
           <button onClick={onMoveUp} disabled={isFirst} className={`p-0.5 rounded ${isFirst ? "text-text-muted/30 cursor-not-allowed" : "hover:bg-sidebar text-text-muted hover:text-primary"}`}>
             <span className="material-symbols-outlined text-sm">keyboard_arrow_up</span>
@@ -187,6 +189,8 @@ ConnectionRow.propTypes = {
   isLast: PropTypes.bool.isRequired,
   onMoveUp: PropTypes.func.isRequired,
   onMoveDown: PropTypes.func.isRequired,
+  selected: PropTypes.bool,
+  onSelect: PropTypes.func,
   onToggleActive: PropTypes.func.isRequired,
   onUpdateProxy: PropTypes.func,
   onEdit: PropTypes.func.isRequired,
@@ -305,6 +309,8 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
   const [providerStrategy, setProviderStrategy] = useState(null);
   const [providerStickyLimit, setProviderStickyLimit] = useState("1");
   const [confirmState, setConfirmState] = useState(null);
+  const [sel, setSel] = useState(() => new Set());
+  const [showOnboard, setShowOnboard] = useState(false);
 
   const fetch_ = useCallback(async () => {
     try {
@@ -326,6 +332,10 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
   }, [providerId]);
 
   useEffect(() => { fetch_(); }, [fetch_]);
+
+  useEffect(() => {
+    try { if (!localStorage.getItem("meai-onboarding-done")) setShowOnboard(true); } catch { /* private mode */ }
+  }, []);
 
   const saveStrategy = async (strategy, stickyLimit) => {
     try {
@@ -373,6 +383,27 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
       const res = await fetch(`/api/providers/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isActive }) });
       if (res.ok) setConnections((prev) => prev.map((c) => c.id === id ? { ...c, isActive } : c));
     } catch (e) { console.log("toggle error:", e); }
+  };
+
+  const toggleSel = (id) => setSel((prev) => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
+
+  const handleBulk = async (action) => {
+    try {
+      const res = await fetch("/api/providers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, ids: Array.from(sel) }),
+      });
+      if (res.ok) {
+        const isActive = action === "enable";
+        setConnections((prev) => prev.map((c) => (sel.has(c.id) ? { ...c, isActive } : c)));
+      }
+    } catch (e) { console.log("bulk error:", e); }
+    finally { setSel(new Set()); }
   };
 
   const handleUpdateProxy = async (connId, proxyPoolId) => {
@@ -427,6 +458,14 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
           </div>
         </div>
 
+        {sel.size > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-3 px-2 py-1.5 rounded-lg border border-border bg-sidebar text-sm">
+            <span className="text-text-muted text-xs font-medium">{sel.size} dipilih</span>
+            <Button size="sm" onClick={() => handleBulk("enable")}>Aktifkan</Button>
+            <Button size="sm" onClick={() => handleBulk("disable")}>Nonaktifkan</Button>
+            <button className="text-xs text-text-muted hover:text-primary ml-auto" onClick={() => setSel(new Set())}>Bersihkan</button>
+          </div>
+        )}
         {connections.length === 0 ? (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-text-muted">No connections yet</p>
@@ -441,6 +480,8 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
                   connection={conn}
                   proxyPools={proxyPools}
                   isOAuth={isOAuth}
+                  selected={sel.has(conn.id)}
+                  onSelect={() => toggleSel(conn.id)}
                   isFirst={idx === 0}
                   isLast={idx === connections.length - 1}
                   onMoveUp={() => handleSwapPriority(idx, idx - 1)}
@@ -483,6 +524,8 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
         message={confirmState?.message}
         variant="danger"
       />
+
+      <OnboardingWizard isOpen={showOnboard} onClose={() => setShowOnboard(false)} />
     </>
   );
 }
