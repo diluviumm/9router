@@ -2,11 +2,11 @@
 
 import PropTypes from "prop-types";
 import { useMemo } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import Card from "@/shared/components/Card";
 
-const TOKEN_COLORS = ["#c8bfff", "#a3d6a8", "#9cb4e8"];
-const MODEL_COLORS = ["#c8bfff", "#a3d6a8", "#eec57f", "#ffb4ab", "#9cb4e8", "#ecb8cd"];
+const TOKEN_COLORS = ["#8b7ce8", "#2f9e5e", "#5b7fd4"]; // medium: kontras utk light+dark
+const MODEL_COLORS = ["#8b7ce8", "#2f9e5e", "#c9882f", "#d45a75", "#5b7fd4", "#7c7c8a"];
 
 const fmt = (n) => {
   const v = n || 0;
@@ -42,14 +42,21 @@ function Donut({ data, colors, caption, total }) {
             ))}
           </Pie>
           <Tooltip
-            contentStyle={{ background: "#201f25", border: "1px solid #48454f", borderRadius: 10, fontSize: 12 }}
-            itemStyle={{ color: "#e5e1e9" }}
+            contentStyle={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: 10, fontSize: 12 }}
+            itemStyle={{ color: "var(--color-text-main)" }}
             formatter={(v, n) => [fmt(v), n]}
           />
-          <Legend wrapperStyle={{ fontSize: 11, color: "#c9c5d0" }} iconSize={8} />
         </PieChart>
       </ResponsiveContainer>
       {centerLabel(total, caption)}
+      <ul className="relative z-10 mt-1 flex w-full flex-wrap justify-center gap-x-3 gap-y-0.5">
+        {shown.map((d, i) => (
+          <li key={d.name} className="flex items-center gap-1 text-[11px] text-text-muted">
+            <span className="inline-block size-2 rounded-full" style={{ background: colors[i % colors.length] }} />
+            {d.name}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

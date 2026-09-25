@@ -292,10 +292,11 @@ function buildLayout(providers, activeSet, lastSet, errorSet) {
   });
 
   const edgeStyle = (active, last, error) => {
-    if (error) return { stroke: "#ef4444", strokeWidth: 2.5, opacity: 0.9 };
-    if (active) return { stroke: "#22d3ee", strokeWidth: 3.5, opacity: 1 };
-    if (last) return { stroke: "#f59e0b", strokeWidth: 2, opacity: 0.7 };
-    return { stroke: "var(--color-border)", strokeWidth: 1, opacity: 0.3 };
+    // ronde-27: warna terlihat di light DAN dark (idle terlalu samar sebelumnya)
+    if (error) return { stroke: "#dc2626", strokeWidth: 2.5, opacity: 0.95 };
+    if (active) return { stroke: "#0891b2", strokeWidth: 3.5, opacity: 1 };
+    if (last) return { stroke: "#d97706", strokeWidth: 2, opacity: 0.85 };
+    return { stroke: "var(--color-text-subtle)", strokeWidth: 1.5, opacity: 0.55 };
   };
 
   providers.forEach((p, i) => {

@@ -22,7 +22,7 @@ const fmtTokens = (n) => {
   return String(n || 0);
 };
 
-const truncate = (s, max = 22) => (s && s.length > max ? s.slice(0, max) + "…" : s || "");
+const truncate = (s, max = 26) => (s && s.length > max ? s.slice(0, max) + "…" : s || "");
 
 export default function TopModelsChart({ byModel }) {
   const [viewMode, setViewMode] = useState("tokens");
@@ -86,7 +86,7 @@ export default function TopModelsChart({ byModel }) {
               tick={{ fontSize: 10, fill: "currentColor", fillOpacity: 0.7 }}
               tickLine={false}
               axisLine={false}
-              width={90}
+              width={148}
             />
             <Tooltip
               contentStyle={{

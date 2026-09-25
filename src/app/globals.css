@@ -43,14 +43,14 @@
   /* Text */
   --color-text: #0a0a0a;
   --color-text-main: #0a0a0a;
-  --color-text-muted: #6B7280;
-  --color-text-subtle: #9CA3AF;
+  --color-text-muted: #60636B;
+  --color-text-subtle: #71717A;
 
   /* Status */
   --color-danger: #cf222e;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-info: #3B82F6;
+  --color-success: #047857;
+  --color-warning: #B45309;
+  --color-info: #2563EB;
 
   /* Radius */
   --radius-brand: 10px;
@@ -618,16 +618,24 @@ button:disabled,
     radial-gradient(880px 520px at 96% 108%, rgba(163, 214, 168, 0.05), transparent 58%);
   background-attachment: fixed;
 }
-/* Glass card layer (dipakai Card component) */
+/* Glass card layer (dipakai Card component) — IKUT TEMA (ronde-27: light tak boleh gelap) */
 .glass-card {
-  background: linear-gradient(160deg, rgba(43, 41, 47, 0.78), rgba(32, 31, 37, 0.94));
-  border: 1px solid rgba(200, 191, 255, 0.14);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(247, 245, 252, 0.98));
+  border: 1px solid rgba(93, 79, 176, 0.16);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 .glass-card:hover {
+  border-color: rgba(93, 79, 176, 0.36);
+  box-shadow: 0 10px 34px -10px rgba(93, 79, 176, 0.22);
+  transform: translateY(-2px);
+}
+.dark .glass-card {
+  background: linear-gradient(160deg, rgba(43, 41, 47, 0.78), rgba(32, 31, 37, 0.94));
+  border: 1px solid rgba(200, 191, 255, 0.14);
+}
+.dark .glass-card:hover {
   border-color: rgba(200, 191, 255, 0.34);
   box-shadow: 0 10px 34px -10px rgba(200, 191, 255, 0.28);
-  transform: translateY(-2px);
 }
 /* 3D tilt layer (JS data-tilt, rAF-throttled; transform-only = GPU) */
 .tilt-3d {

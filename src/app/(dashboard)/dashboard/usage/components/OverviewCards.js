@@ -41,7 +41,7 @@ function KpiCard({ label, value, colorClass, title, series, caption }) {
         {value}
       </span>
       <div className="w-full opacity-80">
-        <Spark series={series} color={colorClass.includes("primary") ? "#c8bfff" : colorClass.includes("success") ? "#a3d6a8" : colorClass.includes("info") ? "#9cb4e8" : colorClass.includes("warning") ? "#eec57f" : "#c9c5d0"} />
+        <Spark series={series} color={colorClass.includes("primary") ? "#8b7ce8" : colorClass.includes("success") ? "#2f9e5e" : colorClass.includes("info") ? "#5b7fd4" : colorClass.includes("warning") ? "#c9882f" : "#94949f"} />
       </div>
       <span className="text-[10px] text-text-subtle">{caption}</span>
     </Card>
