@@ -11,17 +11,18 @@ const providerOptions = Object.values(AI_PROVIDERS).map((p) => ({
   label: p.name,
 }));
 
-const authMethodOptions = Object.values(AUTH_METHODS).map((m) => ({
-  value: m.id,
-  label: m.name,
-}));
+// OAuth flow lives on the provider card (Add Connection), not this API-key form;
+// the option is filtered out here because it has no handler in this form.
+const authMethodOptions = Object.values(AUTH_METHODS)
+  .filter((m) => m.id !== "oauth")
+  .map((m) => ({ value: m.id, label: m.name }));
 
 export default function NewProviderPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     provider: "",
-    authMethod: "api_key",
+    authMethod: "apikey",
     apiKey: "",
     displayName: "",
     isActive: true,
@@ -38,8 +39,8 @@ export default function NewProviderPage() {
   const validate = () => {
     const newErrors = {};
     if (!formData.provider) newErrors.provider = "Please select a provider";
-    if (formData.authMethod === "api_key" && !formData.apiKey) {
-      newErrors.apiKey = "API Key is required";
+    if (["apikey", "cookie"].includes(formData.authMethod) && !formData.apiKey) {
+      newErrors.apiKey = formData.authMethod === "cookie" ? "Cookie value is required" : "API Key is required";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -143,7 +144,7 @@ export default function NewProviderPage() {
                   }`}
                 >
                   <span className="material-symbols-outlined">
-                    {method.value === "api_key" ? "key" : "lock"}
+                    {method.value === "apikey" ? "key" : "cookie"}
                   </span>
                   <span className="font-medium">{method.label}</span>
                 </button>
@@ -152,29 +153,21 @@ export default function NewProviderPage() {
           </div>
 
           {/* API Key Input */}
-          {formData.authMethod === "api_key" && (
+          {(formData.authMethod === "apikey" || formData.authMethod === "cookie") && (
             <Input
-              label="API Key"
+              label={formData.authMethod === "cookie" ? "Cookie Value" : "API Key"}
               type="password"
-              placeholder="Enter your API key"
+              placeholder={formData.authMethod === "cookie" ? "Enter the session cookie" : "Enter your API key"}
               value={formData.apiKey}
               onChange={(e) => handleChange("apiKey", e.target.value)}
               error={errors.apiKey}
-              hint="Your API key will be encrypted and stored securely."
+              hint={
+                formData.authMethod === "cookie"
+                  ? "The provider session cookie, stored encrypted."
+                  : "Your API key will be encrypted and stored securely."
+              }
               required
             />
-          )}
-
-          {/* OAuth2 Button */}
-          {formData.authMethod === "oauth2" && (
-            <Card.Section>
-              <p className="text-sm text-text-muted mb-4">
-                Connect your account using OAuth2 authentication.
-              </p>
-              <Button type="button" variant="secondary" icon="link">
-                Connect with OAuth2
-              </Button>
-            </Card.Section>
           )}
 
           {/* Display Name */}
