@@ -9,6 +9,7 @@ import { cn } from "@/shared/utils/cn";
 import { APP_CONFIG } from "@/shared/constants/config";
 import { LOCALE_COOKIE, normalizeLocale } from "@/i18n/config";
 import { LOCALE_FLAGS } from "@/shared/constants/locales";
+import LoginAudit from "./components/LoginAudit";
 
 function getLocaleFromCookie() {
   if (typeof document === "undefined") return "en";
@@ -940,6 +941,9 @@ export default function ProfilePage() {
             )}
           </div>
         </Card>
+
+        {/* Login activity (audit) */}
+        <LoginAudit />
 
         {/* Single Sign-On (SSO) */}
         <Card>

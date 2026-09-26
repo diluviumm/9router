@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, Button, Input } from "@/shared/components";
 
 export default function LoginPage() {
@@ -9,6 +9,11 @@ export default function LoginPage() {
   const [resetHint, setResetHint] = useState("");
   const [retryAfter, setRetryAfter] = useState(0);
   const [loading, setLoading] = useState(false);
+  // Anti-bot (ronde-31): honeypot + timing + Turnstile opsional (env-gated)
+  const [website, setWebsite] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstile, setTurnstile] = useState(null); // { enabled, sitekey }
+  const loginTsRef = useRef(0); // diisi di effect (render harus murni — react-hooks/purity)
   const [hasPassword, setHasPassword] = useState(null);
   const [authMode, setAuthMode] = useState("password");
   const [ssoType, setSsoType] = useState("oidc");
@@ -63,6 +68,34 @@ export default function LoginPage() {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    loginTsRef.current = Date.now();
+    let alive = true;
+    fetch("/api/auth/turnstile")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!alive || !d?.enabled || !d.sitekey) return;
+        setTurnstile(d);
+        const sc = document.createElement("script");
+        sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+        sc.async = true;
+        sc.onload = () => {
+          const el = document.getElementById("turnstile-box");
+          if (!el || !window.grecaptcha) return;
+          window.grecaptcha.ready(() => {
+            window.grecaptcha.render(el, {
+              sitekey: d.sitekey,
+              callback: (tok) => setTurnstileToken(tok),
+              "expired-callback": () => setTurnstileToken(""),
+            });
+          });
+        };
+        document.head.appendChild(sc);
+      })
+      .catch(() => { /* nonaktif — lanjut tanpa widget */ });
+    return () => { alive = false; };
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -73,7 +106,12 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({
+          password,
+          website,
+          ts: loginTsRef.current,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
 
       if (res.ok) {
@@ -205,6 +243,18 @@ export default function LoginPage() {
 
             {passwordAvailable ? (
               <form onSubmit={handleLogin} className="flex flex-col gap-4">
+                {/* Honeypot anti-bot: manusia tak melihat/mengisi field ini */}
+                <input
+                  type="text"
+                  name="website"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
+                {turnstile && <div id="turnstile-box" className="flex justify-center" />}
                 {isSsoEnabled && !ssoAvailable && (
                   <p className="text-xs text-amber-600 dark:text-amber-400 text-center">
                     {activeSsoType === "saml" ? "SAML SSO" : "OIDC"} login is enabled, but configuration is incomplete. Password login is still available for recovery.

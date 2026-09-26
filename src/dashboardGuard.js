@@ -31,6 +31,7 @@ const PUBLIC_API_PATHS = [
   "/api/auth/saml",
   "/api/version",
   "/api/settings/require-login",
+  "/api/auth/turnstile",
 ];
 
 // Public top-level prefixes (LLM API endpoints with their own API key auth).
@@ -46,6 +47,7 @@ const ALWAYS_PROTECTED = [
   "/api/oauth/cursor/auto-import",
   "/api/oauth/kiro/auto-import",
   "/api/upstream",
+  "/api/auth/audit",
 ];
 
 // Require auth, but allow through if requireLogin is disabled

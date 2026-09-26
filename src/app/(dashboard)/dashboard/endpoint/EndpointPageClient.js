@@ -17,6 +17,56 @@ import EndpointRow from "./components/EndpointRow";
 import StatusAlert from "./components/StatusAlert";
 import Tooltip from "./components/Tooltip";
 import SecurityWarning from "./components/SecurityWarning";
+/** Status backup DB (ronde-31): baca /api/backup/status, tampil sbg strip. */
+function BackupStatusCard() {
+  const [info, setInfo] = useState(null);
+  useEffect(() => {
+    fetch("/api/backup/status")
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setInfo)
+      .catch(() => setInfo(null));
+  }, []);
+  const fmt = (ts) => {
+    try { return new Date(ts).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); } catch { return "—"; }
+  };
+  return (
+    <Card id="backup-status">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+          <span className="material-symbols-outlined text-[20px]">cloud_done</span>
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold">Backup &amp; Retention</h2>
+          <p className="text-xs text-text-muted">Otomatis harian oleh timer meai-daily (03:25, simpan 7 hari)</p>
+        </div>
+      </div>
+      {info === null ? (
+        <p className="text-sm text-text-muted">Loading…</p>
+      ) : !info.exists ? (
+        <p className="text-sm text-amber-600 dark:text-amber-400">Folder backup belum ada — backup berikutnya dibuat otomatis 03:25.</p>
+      ) : (
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          <span className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[15px] text-emerald-600 dark:text-emerald-400">check_circle</span>
+            <span className="text-text-muted">Backup terakhir:</span>
+            <b>{info.latest ? fmt(info.latest.at) : "belum ada"}</b>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[15px] text-primary">inventory_2</span>
+            <span className="text-text-muted">Snapshot:</span>
+            <b>{info.snapshots}</b>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[15px] text-primary">hard_drive</span>
+            <span className="text-text-muted">Total:</span>
+            <b>{info.totalMB} MB</b>
+          </span>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 export default function APIPageClient({ machineId }) {
   const [keys, setKeys] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -961,6 +1011,9 @@ export default function APIPageClient({ machineId }) {
           </div>
         )}
       </Card>
+
+      {/* Backup status */}
+      <BackupStatusCard />
 
       {/* API Keys */}
       <Card id="require-api-key">

@@ -662,3 +662,15 @@ button:disabled,
 @media (hover: none) {
   .glass-card:hover { transform: none; box-shadow: none; }
 }
+
+/* === Print / Export PDF (ronde-31) ===
+   Sembunyikan chrome dashboard, lepas overflow viewport supaya SEMUA konten tercetak. */
+@media print {
+  aside, header { display: none !important; }
+  .fixed.inset-y-0.left-0, .fixed.top-4 { display: none !important; }
+  html, body { height: auto !important; overflow: visible !important; }
+  .h-screen, .h-full, .overflow-hidden, .overflow-y-auto { height: auto !important; overflow: visible !important; }
+  .no-print { display: none !important; }
+  a[href]::after { content: ""; }
+  main { min-height: auto !important; }
+}

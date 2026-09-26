@@ -7,6 +7,7 @@ import { isOidcConfigured } from "@/lib/auth/oidc";
 import { isSamlConfigured } from "@/lib/auth/saml.js";
 import { checkLock, recordFail, recordSuccess, getClientIp } from "@/lib/auth/loginLimiter";
 import { isLocalRequest } from "@/dashboardGuard";
+import { recordLoginEvent } from "@/lib/auth/auditLog";
 
 const RESET_HINT = "Forgot password? Reset to default via MeAI CLI → Settings → Reset Password to Default.";
 const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
@@ -39,6 +40,39 @@ export async function POST(request) {
     if (typeof password !== "string" || password.length === 0) {
       return NextResponse.json({ error: "Password required" }, { status: 400, headers: NO_STORE_HEADERS });
     }
+
+    // ---- Anti-bot (ronde-31): honeypot + timing + Turnstile opsional ----
+    // Cron (meai-daily/usage/availability/visual-guard) tidak mengirim field ini → lolos.
+    const { website, ts, turnstileToken } = body || {};
+    if (typeof website === "string" && website.trim() !== "") {
+      recordLoginEvent({ ip, ok: false, method: "bot", detail: "honeypot" });
+      return NextResponse.json({ error: "Invalid request" }, { status: 400, headers: NO_STORE_HEADERS });
+    }
+    if (typeof ts === "number" && Date.now() - ts < 1200) {
+      recordLoginEvent({ ip, ok: false, method: "bot", detail: "too-fast" });
+      return NextResponse.json({ error: "Please try again in a moment" }, { status: 400, headers: NO_STORE_HEADERS });
+    }
+    const turnstileSecret = process.env.CF_TURNSTILE_SECRET;
+    if (turnstileSecret) {
+      if (!turnstileToken || typeof turnstileToken !== "string") {
+        return NextResponse.json({ error: "Security verification required" }, { status: 403, headers: NO_STORE_HEADERS });
+      }
+      try {
+        const form = new FormData();
+        form.append("secret", turnstileSecret);
+        form.append("response", turnstileToken);
+        const vr = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
+        const vj = await vr.json();
+        if (!vj.success) {
+          recordLoginEvent({ ip, ok: false, method: "turnstile", detail: "verify-failed" });
+          return NextResponse.json({ error: "Security verification failed" }, { status: 403, headers: NO_STORE_HEADERS });
+        }
+      } catch {
+        return NextResponse.json({ error: "Security verification unavailable" }, { status: 502, headers: NO_STORE_HEADERS });
+      }
+    }
+    // ---- /Anti-bot ----
+
     const settings = await getSettings();
 
     // Block login via tunnel/tailscale if dashboard access is disabled
@@ -98,11 +132,13 @@ export async function POST(request) {
 
       const cookieStore = await cookies();
       await setDashboardAuthCookie(cookieStore, request);
+      recordLoginEvent({ ip, ok: true, method: "password" });
 
       return NextResponse.json({ success: true, mustChangePassword: false }, { headers: NO_STORE_HEADERS });
     }
 
     const { remainingBeforeLock } = recordFail(ip);
+    recordLoginEvent({ ip, ok: false, method: "password", detail: "invalid password" });
     const postLock = checkLock(ip);
     if (postLock.locked) {
       return NextResponse.json(

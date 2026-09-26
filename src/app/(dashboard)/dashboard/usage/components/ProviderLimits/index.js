@@ -755,6 +755,33 @@ export default function ProviderLimits() {
     });
   };
 
+  /** Ringkasan agregat (ronde-31): total koneksi aktif, rata-rata sisa, depleted */
+  const quotaSummary = useMemo(() => {
+    const rows = sortedConnections.filter((c) => c.isActive !== false);
+    const pcts = [];
+    let depleted = 0;
+    let tracked = 0;
+    for (const conn of rows) {
+      const numericQ = (quotaData[conn.id]?.quotas || []).filter((q) => q && Number(q.total) > 0);
+      if (!numericQ.length) continue;
+      tracked += 1;
+      const avg = numericQ.reduce((acc, q) => {
+        const rem = q.remainingPercentage != null
+          ? Number(q.remainingPercentage)
+          : ((Number(q.total) - Number(q.used || 0)) / Number(q.total)) * 100;
+        return acc + rem;
+      }, 0) / numericQ.length;
+      pcts.push(avg);
+      if (isConnectionDepleted(conn)) depleted += 1;
+    }
+    return {
+      connections: rows.length,
+      tracked,
+      avgRemaining: pcts.length ? Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length) : null,
+      depleted,
+    };
+  }, [sortedConnections, quotaData]);
+
   const bulkSetActive = useCallback(
     async (targetIds, isActive) => {
       if (!targetIds.length || bulkToggling) return;
@@ -999,7 +1026,7 @@ export default function ProviderLimits() {
             type="button"
             onClick={handleDisableDepleted}
             disabled={bulkToggling}
-            className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-red-500/30 px-2 text-xs text-red-500 transition-colors hover:bg-red-500/10 disabled:opacity-50"
+            className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-red-500/30 px-2 text-xs text-red-700 dark:text-red-400 transition-colors hover:bg-red-500/10 disabled:opacity-50"
             title="Disable connections with depleted quota on the current page"
           >
             <span className="material-symbols-outlined text-[14px]">block</span>
@@ -1011,7 +1038,7 @@ export default function ProviderLimits() {
             type="button"
             onClick={handleEnableAvailable}
             disabled={bulkToggling}
-            className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-emerald-500/30 px-2 text-xs text-emerald-500 transition-colors hover:bg-emerald-500/10 disabled:opacity-50"
+            className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-emerald-500/30 px-2 text-xs text-emerald-700 dark:text-emerald-400 transition-colors hover:bg-emerald-500/10 disabled:opacity-50"
             title="Enable connections that still have quota on the current page"
           >
             <span className="material-symbols-outlined text-[14px]">
@@ -1068,6 +1095,31 @@ export default function ProviderLimits() {
           Cross-page ordering still follows backend pagination.
         </div>
       )}
+
+      {/* Ringkasan total (ronde-31) */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 rounded-xl border border-black/10 bg-black/[0.02] px-4 py-2.5 text-xs dark:border-white/10 dark:bg-white/[0.03]">
+        <span className="font-semibold text-text-primary">Total</span>
+        <span className="flex items-center gap-1.5 text-text-muted">
+          <span className="material-symbols-outlined text-[14px] text-primary">dns</span>
+          <b className="text-text-primary">{quotaSummary.connections}</b> connection{quotaSummary.connections === 1 ? "" : "s"}
+        </span>
+        <span className="flex items-center gap-1.5 text-text-muted">
+          <span className="material-symbols-outlined text-[14px] text-primary">donut_small</span>
+          {quotaSummary.tracked > 0 ? (
+            <>
+              <b className="text-text-primary">{quotaSummary.avgRemaining}%</b> avg remaining ({quotaSummary.tracked} tracked)
+            </>
+          ) : (
+            "quota data not loaded yet"
+          )}
+        </span>
+        {quotaSummary.depleted > 0 && (
+          <span className="flex items-center gap-1.5 text-red-700 dark:text-red-400">
+            <span className="material-symbols-outlined text-[14px]">error</span>
+            <b>{quotaSummary.depleted}</b> depleted
+          </span>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 items-start md:grid-cols-2 gap-3">
         {sortedConnections.map((conn) => {

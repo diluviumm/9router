@@ -17,10 +17,29 @@ const inter = Inter({
 });
 
 export const metadata = {
+  // Base absolut utk openGraph/sitemap (Next warning: metadataBase wajib dgn og images)
+  metadataBase: new URL(process.env.APP_URL || "http://localhost:20128"),
   title: "MeAI - Mael Stack",
   description: "One endpoint for all your AI providers. Manage keys, monitor usage, and scale effortlessly.",
   icons: {
     icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "MeAI - Mael Stack",
+    description: "One endpoint for all your AI providers. Manage keys, monitor usage, and scale effortlessly.",
+    url: "http://127.0.0.1:20128/",
+    siteName: "MeAI",
+    images: [
+      { url: "/og.png", width: 1200, height: 630, alt: "MeAI dashboard" },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MeAI - Mael Stack",
+    description: "One endpoint for all your AI providers. Manage keys, monitor usage, and scale effortlessly.",
+    images: ["/og.png"],
   },
 };
 
