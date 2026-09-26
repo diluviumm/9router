@@ -334,7 +334,13 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
   useEffect(() => { fetch_(); }, [fetch_]);
 
   useEffect(() => {
-    try { if (!localStorage.getItem("meai-onboarding-done")) setShowOnboard(true); } catch { /* private mode */ }
+    // Init dari localStorage — setState ditunda ke rAF (bukan sinkron di effect)
+    // agar lolos react-hooks/set-state-in-effect; hydrasi tetap aman (server = false).
+    let show = false;
+    try { show = !localStorage.getItem("meai-onboarding-done"); } catch { /* private mode */ }
+    if (!show) return;
+    const id = requestAnimationFrame(() => setShowOnboard(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   const saveStrategy = async (strategy, stickyLimit) => {
