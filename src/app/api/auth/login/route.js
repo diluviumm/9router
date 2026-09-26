@@ -29,7 +29,16 @@ export async function POST(request) {
       );
     }
 
-    const { password } = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400, headers: NO_STORE_HEADERS });
+    }
+    const password = body?.password;
+    if (typeof password !== "string" || password.length === 0) {
+      return NextResponse.json({ error: "Password required" }, { status: 400, headers: NO_STORE_HEADERS });
+    }
     const settings = await getSettings();
 
     // Block login via tunnel/tailscale if dashboard access is disabled
