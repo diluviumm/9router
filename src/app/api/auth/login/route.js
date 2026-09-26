@@ -54,21 +54,30 @@ export async function POST(request) {
     }
     const turnstileSecret = process.env.CF_TURNSTILE_SECRET;
     if (turnstileSecret) {
-      if (!turnstileToken || typeof turnstileToken !== "string") {
-        return NextResponse.json({ error: "Security verification required" }, { status: 403, headers: NO_STORE_HEADERS });
-      }
-      try {
-        const form = new FormData();
-        form.append("secret", turnstileSecret);
-        form.append("response", turnstileToken);
-        const vr = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
-        const vj = await vr.json();
-        if (!vj.success) {
-          recordLoginEvent({ ip, ok: false, method: "turnstile", detail: "verify-failed" });
-          return NextResponse.json({ error: "Security verification failed" }, { status: 403, headers: NO_STORE_HEADERS });
+      // Official Cloudflare TEST secret (always-pass) = mode uji: token yg ada
+      // tetap diverifikasi via API (bukti jalur), tapi TIDAK PERNAH mengunci
+      // login bila token kosong / CF tak terjangkau (widget gagal muat).
+      // Ganti ke secret asli → mode ketat (wajib token + verify sukses).
+      const isTest = turnstileSecret.startsWith("1x0000000000000000000000000000000");
+      const hasToken = typeof turnstileToken === "string" && turnstileToken.length > 0;
+      if (hasToken) {
+        try {
+          const form = new FormData();
+          form.append("secret", turnstileSecret);
+          form.append("response", turnstileToken);
+          const vr = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
+          const vj = await vr.json();
+          if (!vj.success && !isTest) {
+            recordLoginEvent({ ip, ok: false, method: "turnstile", detail: "verify-failed" });
+            return NextResponse.json({ error: "Security verification failed" }, { status: 403, headers: NO_STORE_HEADERS });
+          }
+        } catch {
+          if (!isTest) {
+            return NextResponse.json({ error: "Security verification unavailable" }, { status: 502, headers: NO_STORE_HEADERS });
+          }
         }
-      } catch {
-        return NextResponse.json({ error: "Security verification unavailable" }, { status: 502, headers: NO_STORE_HEADERS });
+      } else if (!isTest) {
+        return NextResponse.json({ error: "Security verification required" }, { status: 403, headers: NO_STORE_HEADERS });
       }
     }
     // ---- /Anti-bot ----

@@ -290,6 +290,53 @@ async function passthroughHttps(req, res, bodyBuffer, headers, targetHost, onRes
   forwardReq.end();
 }
 
+// ── Request capture (Recent Requests + Replay, ronde-31) ────────
+// Catat ringkas tiap request yg lewat proxy: utk UI Mitm > Recent Requests
+// + replay kirim ulang. Ringan: append JSONL, rotasi ~1MB, async queue.
+const REQUESTS_FILE = path.join(MITM_DIR, "requests.jsonl");
+const REQUESTS_MAX_BYTES = 1024 * 1024;
+const REPLAY_BODY_MAX = 64 * 1024;
+let reqWriteQueue = Promise.resolve();
+let reqBytesSinceCheck = 0;
+
+function beginCapture(req, res, bodyBuffer) {
+  const t0 = Date.now();
+  res.on("finish", () => {
+    try {
+      if (req.headers[INTERNAL_REQUEST_HEADER.name] === INTERNAL_REQUEST_HEADER.value) return;
+      const raw = bodyBuffer && bodyBuffer.length ? bodyBuffer : null;
+      const entry = {
+        ts: Math.floor(t0 / 1000),
+        method: req.method || "GET",
+        host: String(req.headers.host || ""),
+        url: String(req.url || "").slice(0, 4096),
+        status: res.statusCode,
+        ms: Date.now() - t0,
+        headers: { ...req.headers },
+        body: raw ? raw.subarray(0, REPLAY_BODY_MAX).toString("utf8") : null,
+        bodyTruncated: !!raw && raw.length > REPLAY_BODY_MAX,
+      };
+      const line = JSON.stringify(entry);
+      reqWriteQueue = reqWriteQueue.then(async () => {
+        try {
+          await fs.promises.appendFile(REQUESTS_FILE, line + "\n");
+          reqBytesSinceCheck += line.length + 1;
+          if (reqBytesSinceCheck >= 65536) {
+            reqBytesSinceCheck = 0;
+            const st = await fs.promises.stat(REQUESTS_FILE);
+            if (st.size > REQUESTS_MAX_BYTES) {
+              const data = await fs.promises.readFile(REQUESTS_FILE, "utf8");
+              const all = data.split("\n").filter(Boolean);
+              const keep = all.slice(-Math.max(1, Math.floor(all.length / 2)));
+              await fs.promises.writeFile(REQUESTS_FILE, keep.join("\n") + "\n");
+            }
+          }
+        } catch { /* capture tak boleh mengganggu alur proxy */ }
+      });
+    } catch { /* ignore */ }
+  });
+}
+
 // ── Request handler ───────────────────────────────────────────
 
 const server = https.createServer(sslOptions, async (req, res) => {
@@ -302,6 +349,8 @@ const server = https.createServer(sslOptions, async (req, res) => {
 
     const bodyBuffer = await collectBodyRaw(req);
     if (ENABLE_FILE_LOG) dumpRequest(req, bodyBuffer, "raw");
+
+    beginCapture(req, res, bodyBuffer);
 
     // Anti-loop: skip requests from MeAI
     if (req.headers[INTERNAL_REQUEST_HEADER.name] === INTERNAL_REQUEST_HEADER.value) {

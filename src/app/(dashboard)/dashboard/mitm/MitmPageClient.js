@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { MITM_TOOLS } from "@/shared/constants/cliTools";
 import { getModelsByProviderId } from "@/shared/constants/models";
 import { isOpenAICompatibleProvider, isAnthropicCompatibleProvider } from "@/shared/constants/providers";
-import { MitmServerCard, MitmToolCard } from "@/app/(dashboard)/dashboard/cli-tools/components";
+import { MitmServerCard, MitmToolCard, MitmRequestsCard } from "@/app/(dashboard)/dashboard/cli-tools/components";
 
 export default function MitmPageClient() {
   const [connections, setConnections] = useState([]);
@@ -89,6 +89,9 @@ export default function MitmPageClient() {
         cloudEnabled={cloudEnabled}
         onStatusChange={setMitmStatus}
       />
+
+      {/* Recent Requests + Replay (ronde-31) */}
+      <MitmRequestsCard />
 
       {/* Tool Cards */}
       <div className="grid gap-3 sm:gap-4">

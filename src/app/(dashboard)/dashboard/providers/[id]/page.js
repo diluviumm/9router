@@ -18,6 +18,7 @@ import ModelRow from "./ModelRow";
 import PassthroughModelsSection from "./PassthroughModelsSection";
 import CompatibleModelsSection from "./CompatibleModelsSection";
 import ConnectionRow from "./ConnectionRow";
+import UptimeBar from "../components/UptimeBar";
 import AddApiKeyModal from "./AddApiKeyModal";
 import EditCompatibleNodeModal from "./EditCompatibleNodeModal";
 import AddCustomModelModal from "./AddCustomModelModal";
@@ -1504,6 +1505,15 @@ export default function ProviderDetailPage() {
           </div>
         </Card>
       )}
+
+      {/* Availability 7 hari (ronde-31) */}
+      <Card>
+        <div className="mb-3 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[18px] text-text-muted">monitor_heart</span>
+          <h3 className="text-sm font-semibold">Availability (7 days)</h3>
+        </div>
+        <UptimeBar providerId={providerId} />
+      </Card>
 
       {/* Connections */}
       {isFreeNoAuth ? (

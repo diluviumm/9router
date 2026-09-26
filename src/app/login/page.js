@@ -76,21 +76,36 @@ export default function LoginPage() {
       .then((d) => {
         if (!alive || !d?.enabled || !d.sitekey) return;
         setTurnstile(d);
-        const sc = document.createElement("script");
-        sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-        sc.async = true;
-        sc.onload = () => {
+        // Render widget bila elemen sudah ada (re-render React) — cegah race
+        // onload-vs-render: coba berulang sampai box siap atau habis 10 dtk.
+        // API modern Cloudflare = window.turnstile (window.grecaptcha sudah TIDAK
+        // didefinisikan api.js versi baru — teruji langsung di browser).
+        const renderWidget = () => {
           const el = document.getElementById("turnstile-box");
-          if (!el || !window.grecaptcha) return;
-          window.grecaptcha.ready(() => {
-            window.grecaptcha.render(el, {
+          if (!el || el.dataset.rendered) return !!el?.dataset.rendered;
+          const T = window.turnstile;
+          if (!T || typeof T.render !== "function") return false;
+          el.dataset.rendered = "1";
+          try {
+            T.render(el, {
               sitekey: d.sitekey,
               callback: (tok) => setTurnstileToken(tok),
               "expired-callback": () => setTurnstileToken(""),
             });
-          });
+          } catch { delete el.dataset.rendered; }
+          return true;
         };
-        document.head.appendChild(sc);
+        let tries = 0;
+        const tryRender = () => { if (renderWidget() || ++tries > 40) clearInterval(iv); };
+        const iv = setInterval(tryRender, 250);
+        if (!document.querySelector('script[src*="challenges.cloudflare.com"]')) {
+          const sc = document.createElement("script");
+          sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+          sc.async = true;
+          sc.onload = tryRender;
+          sc.onerror = () => clearInterval(iv); // gagal muat → nonaktif, login tetap jalan (test-key mode)
+          document.head.appendChild(sc);
+        }
       })
       .catch(() => { /* nonaktif — lanjut tanpa widget */ });
     return () => { alive = false; };
